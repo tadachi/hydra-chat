@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
 import './App.css'
 
 // Mobx
@@ -20,10 +19,10 @@ import Chat from './components/Chat'
 // import ThemeSelect from './components/ThemeSelect'
 
 //Utility
-import { getParams } from './utility/utility'
+import { getParams, getBaseUrl } from './utility/utility'
 
+let Main = null
 let ChatComponent = null
-
 @observer // Watches store. when data changes, re-render component.
 class App extends Component {
   componentDidMount() {
@@ -35,15 +34,13 @@ class App extends Component {
       store.setAccessToken(oAuth)
       store.setUserObject().then((response) => {
         store.login().then(() => {
+          Main = <MainLayout />
           ChatComponent = <Chat />
+          store.updateStreamers()
           this.forceUpdate()
         })
-        store.updateStreamers()
       })
     }
-    // Listeners
-    // window.removeEventListener('resize', store.updateDimensions(window.innerWidth, window.innerHeight));
-
   }
 
   componentWillUnmount() {
@@ -53,33 +50,35 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider theme={store.theme}>
-        <Router>
-          <div>
-            <Route exact path="/" component={observer(LoginLayout)} />
-            <Route exact path="/login" component={observer(LoginLayout)} />
-            <Route exact path="/chat" component={observer(MainLayout)} />
-          </div>
-        </Router>
+        <div>
+          {store.oAuth ? Main : <LoginLayout />}
+        </div>
       </MuiThemeProvider>
     );
   }
 }
 
-const LoginLayout = () => (
-  <Grid style={{
-    height: store.height,
-    backgroundColor: store.theme.palette.background.default
-  }} container alignItems='center' justify='center'>
-    <Grid direction='column' style={{ width: 500, height: 500, backgroundColor: store.theme.palette.background.default, }} container alignItems='center' justify='center'>
-      <div>
-        <img style={{ width: 250, height: 250, margin: '2%' }} src='http://localhost:3000/logo.jpg' alt='logo' />
-      </div>
-      <div>
-        <Login style={{}} client_id={client_id} />
-      </div>
-    </Grid>
-  </Grid>
-)
+@observer
+class LoginLayout extends Component {
+  render() {
+    return (
+      <Grid style={{
+        height: store.height,
+        backgroundColor: store.theme.palette.background.default
+      }} container alignItems='center' justify='center'>
+        <Grid direction='column' style={{ width: 500, height: 500, backgroundColor: store.theme.palette.background.default, }} container alignItems='center' justify='center'>
+          <div>
+            <img style={{ width: 250, height: 250, margin: '2%' }} src={`${getBaseUrl()}/logo.jpg`} alt='logo' />
+          </div>
+          <div>
+            <Login style={{}} client_id={client_id} />
+          </div>
+        </Grid>
+      </Grid>
+    )
+  }
+}
+
 
 @observer
 class MainLayout extends Component {
@@ -105,7 +104,7 @@ class MainLayout extends Component {
               <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
               <div><WindowDimensions /></div>
               <div>{store.userName}</div>
-              <div>{store.oAuth}</div>
+              {/* <div>{store.oAuth}</div> */}
               <div>{store.systemTheme}</div>
               <div>{store.messages.length}</div>
               <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>

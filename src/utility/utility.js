@@ -26,3 +26,12 @@ export function clean(string) {
 export function removeHashtag(string) {
   return string.replace('#', "").toLowerCase();
 }
+
+export function getRootUrl() {
+  return window.location.origin ? window.location.origin + '/' : window.location.protocol + '/' + window.location.host + '/';
+}
+
+export function getBaseUrl() {
+	var re = new RegExp(/^.*\//);
+	return re.exec(window.location.href);
+}

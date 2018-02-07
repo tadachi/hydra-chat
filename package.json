@@ -29,5 +29,9 @@
   },
   "devDependencies": {
     "gh-pages": "^1.1.0"
+  },
+  "config": {
+    "TwitchDevelopmentClientID": "gpa5zi9y5d70q9b2lcpcwvikp7mek0",
+    "TwitchProductionClientID": "yc5s3u4bv8en92xxii4vf3xkwanlyb"
   }
 }

@@ -165,3 +165,18 @@ const channelSelect = store.channels.length > 0 ?
 }
 
 onKeyDown = { this.switchChannel.bind(this) }
+
+render() {
+  return (
+    <MuiThemeProvider theme={store.theme}>
+      <Router>
+        <div>
+          <Route exact path="/" component={observer(LoginLayout)} />
+          <Route exact path="/login" component={observer(LoginLayout)} />
+          <Route exact path="/chat" component={observer(MainLayout)} />
+        </div>
+      </Router>
+    </MuiThemeProvider>
+  );
+}
+}

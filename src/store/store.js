@@ -5,17 +5,24 @@ import axios from 'axios'
 import { clean } from '../utility/utility'
 
 // Utilities
-import tmi from  'twitch-js'
+import tmi from 'twitch-js'
 import _ from 'lodash'
 
 // Material-UI
-import {createMuiTheme} from 'material-ui/styles'
+import { createMuiTheme } from 'material-ui/styles'
 
+// Package.json
+// import packageJson from '../../package.json'
+
+// Production
+// const client_id = 'yc5s3u4bv8en92xxii4vf3xkwanlyb'
+// const redirect_uri = 'https://tadachi.github.com/hydra-chat'
+
+// Development
 const client_id = 'gpa5zi9y5d70q9b2lcpcwvikp7mek0'
+const redirect_uri = 'http://localhost:3000/'
 
 const max_length = web_safe_colors.length - 1 // off by one
-
-console.log(tmi)
 
 class Store {
   // App
@@ -33,14 +40,14 @@ class Store {
   @observable width = 0
   @observable height = 0
   @observable drawerOpen = true
-  @observable drawerWidth = 350
+  @observable drawerWidth = 300
 
   // Channel Manager
   @observable streams
   client = undefined
   options = {
     options: {
-      debug: true
+      debug: false
     },
     connection: {
       reconnect: true
@@ -59,6 +66,13 @@ class Store {
   @observable msg_id = 0
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
+
+  // Login
+  @observable twitchLoginUrl = `https://api.twitch.tv/kraken/oauth2/authorize
+?client_id=${client_id}
+&redirect_uri=${redirect_uri}
+&response_type=token
+&scope=openid+chat_login+user_read`
 
   /**
    * Set access token (oAuth)
@@ -185,7 +199,7 @@ class Store {
             joined: true,
             autojoin: false
           })
-          this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined})
+          this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           console.log(toJS(this.channels))
           console.log(toJS(this.joinedChannels))
         })
@@ -217,7 +231,7 @@ class Store {
             // color: color,
             // autojoin: autojoin
           })
-          this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined})
+          this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           console.log(toJS(this.channels))
           console.log(toJS(this.joinedChannels))
         })
@@ -238,7 +252,6 @@ class Store {
   @action updateDimensions(w, h) {
     this.width = w
     this.height = h + 10 //Covers missing pixels at the bottom of the window
-    console.log(this.width + ' ' + this.height)
   }
 
   /**
@@ -249,7 +262,6 @@ class Store {
    */
   @action updateDrawerWidth(w) {
     this.drawerWidth = w
-    console.log('drawerWidth' + this.drawerWidth)
   }
 
   /**

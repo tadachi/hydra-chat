@@ -21,4 +21,8 @@
 
 * Support subscriber emotes
 
-* Register urls in chat so you can click and visit them.
+* Register urls in chat so you can click and visit them
+
+* Save the access token and permissions in LocalStorage
+
+* remove queryString from the URL so to not alarm the User
