@@ -2,6 +2,7 @@
   "name": "hydra-chat",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://tadachi.github.com/hydra-chat",
   "dependencies": {
     "axios": "^0.17.1",
     "custom-react-scripts": "0.2.1",
@@ -19,6 +20,8 @@
     "wolfy87-eventemitter": "^5.2.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
