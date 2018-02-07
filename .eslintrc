@@ -1,0 +1,10 @@
+{
+  "extends": "react-app",
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0
+  },
+  "globals": {
+    "_": false
+  }
+}
