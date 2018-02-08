@@ -26,3 +26,7 @@
 * Save the access token and permissions in LocalStorage
 
 * remove queryString from the URL so to not alarm the User
+
+* Figure out what to do after Chrome distrusts Symantec certificates
+
+* Migrate to new Twitch API during/after 2018
