@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 
 // Mobx
-import { observer } from 'mobx-react'
+import { observer, observable} from 'mobx-react'
 import store from './store/store';
 import { client_id } from './store/store'
 
@@ -60,6 +60,7 @@ class App extends Component {
 
 @observer
 class LoginLayout extends Component {
+
   render() {
     return (
       <Grid style={{
@@ -78,7 +79,6 @@ class LoginLayout extends Component {
     )
   }
 }
-
 
 @observer
 class MainLayout extends Component {
@@ -106,7 +106,7 @@ class MainLayout extends Component {
               <div>{store.userName}</div>
               {/* <div>{store.oAuth}</div> */}
               <div>{store.systemTheme}</div>
-              <div>{store.messages.length}</div>
+              <div>{store.msg_id}</div>
               <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
               <div>scrollToEnd: {String(store.scrollToEnd)}</div>
               <div>channelSelectValue: {store.channelSelectValue}</div>

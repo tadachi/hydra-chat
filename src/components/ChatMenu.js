@@ -59,7 +59,7 @@ class ChatMenu extends React.Component {
               type="email"
               fullWidth
             /> */}
-            <Button color={'primary'} onClick={this.clearChat.bind(this)}>
+            <Button variant='raised' color={'primary'} onClick={this.clearChat.bind(this)}>
               Clear My Chat
               <Delete />
             </Button>

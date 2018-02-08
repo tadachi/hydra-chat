@@ -4,7 +4,7 @@ This is the my 3rd and latest iteration of all the features I only want and need
 
 ## Use Cases
 
-1. *Join a couple* of popular channels and watch the messages and memes flood the room 
+1. *Join a couple* of popular channels and watch the messages and memes flood the room.
 
 2. *join a bunch* of small, comfy streams you frequent and never miss a message.
 

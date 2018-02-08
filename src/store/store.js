@@ -17,10 +17,12 @@ import { createMuiTheme } from 'material-ui/styles'
 // Production
 // const client_id = 'yc5s3u4bv8en92xxii4vf3xkwanlyb'
 // const redirect_uri = 'https://tadachi.github.com/hydra-chat'
+// const secure = true
 
 // Development
 const client_id = 'gpa5zi9y5d70q9b2lcpcwvikp7mek0'
 const redirect_uri = 'http://localhost:3000/'
+const secure = false
 
 const max_length = web_safe_colors.length - 1 // off by one
 
@@ -50,7 +52,8 @@ class Store {
       debug: false
     },
     connection: {
-      reconnect: true
+      reconnect: true,
+      secure: secure,
     },
     identity: {
       username: '',
@@ -62,7 +65,6 @@ class Store {
   // Chat
   @observable channelSelectValue = 0
   @observable joinedChannels = []
-  @observable messages = []
   @observable msg_id = 0
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
