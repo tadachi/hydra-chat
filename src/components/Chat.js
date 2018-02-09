@@ -140,7 +140,7 @@ class Chat extends Component {
     }
 
     store.client.on('chat', (channel, userstate, message, self) => {
-      let newMessages = this.state.messages
+      // let newMessages = this.state.messages
       const time = moment().format('h:mm:ss')
       // Save messages incase user exits
       const messageObj = { channel: channel, userstate: userstate, message: message, time: time }
@@ -152,11 +152,11 @@ class Chat extends Component {
       // Step 2
       const newMessage = processMessage(channel, msg, key)
       // Step 3
-      newMessages.push(newMessage)
-      // store.messages.push(newMessage)
-      this.setState({
-        messages: newMessages
-      })
+      // newMessages.push(newMessage)
+      store.messages.push(newMessage)
+      // this.setState({
+      //   messages: newMessages
+      // })
 
       this.forceUpdate()
 
@@ -172,19 +172,19 @@ class Chat extends Component {
   }
 
   truncateMessages() {
-    // const truncatedMessages = store.messages
-    // if (truncatedMessages.length > 750) {
-    //   truncatedMessages.splice(0, 350)
-    //   store.messages = truncatedMessages
-    // }
-
-    const truncatedMessages = this.state.messages
+    const truncatedMessages = store.messages
     if (truncatedMessages.length > 750) {
       truncatedMessages.splice(0, 350)
-      this.setState({
-        messages: truncatedMessages
-      })
+      store.messages = truncatedMessages
     }
+
+    // const truncatedMessages = this.state.messages
+    // if (truncatedMessages.length > 750) {
+    //   truncatedMessages.splice(0, 350)
+    //   this.setState({
+    //     messages: truncatedMessages
+    //   })
+    // }
   }
 
     parseForEmotes(message, channel) {
@@ -256,19 +256,24 @@ class Chat extends Component {
     }
 
     switchChannel(event) {
-      if (event.key === 'ArrowUp') {
-        if (store.channelSelectValue < store.joinedChannels.length - 1) {
-          store.channelSelectValue += 1
-        } else {
-          store.channelSelectValue = 0
+      try {
+        if (event.key === 'ArrowUp') {
+          if (store.channelSelectValue < store.joinedChannels.length - 1) {
+            store.channelSelectValue += 1
+          } else {
+            store.channelSelectValue = 0
+          }
         }
-      }
-      if (event.key === 'ArrowDown') {
-        if (store.channelSelectValue < store.joinedChannels.length && store.channelSelectValue > 0) {
-          store.channelSelectValue -= 1
-        } else {
-          store.channelSelectValue = store.joinedChannels.length - 1
+        if (event.key === 'ArrowDown') {
+          if (store.channelSelectValue < store.joinedChannels.length && store.channelSelectValue > 0) {
+            store.channelSelectValue -= 1
+          } else {
+            store.channelSelectValue = store.joinedChannels.length - 1
+          }
         }
+      } catch (err) {
+        console.log(err)
+        store.channelSelectValue = 0
       }
     }
 
@@ -291,7 +296,8 @@ class Chat extends Component {
       const chatArea =
         <div style={{ width: w, height: store.height * 7.6 / 9, overflowY: 'scroll', overflowX: 'hidden', border: '1px solid black', marginTop: '10px', marginLeft: '2px' }} ref={(el) => { this.chatScroll = el }} id={'chat'}>
           <div>
-            {this.state.messages}
+            {/* {this.state.messages} */}
+            {store.messages}
           </div>
           <div id={'endOfChat'} ref={(el) => { this.messagesEnd = el }} />
         </div>

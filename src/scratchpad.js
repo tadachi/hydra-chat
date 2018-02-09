@@ -180,3 +180,69 @@ render() {
   );
 }
 }
+
+    // setTimeout(() => {
+    //     store.join('#icarusFW')
+    //     store.join('#Pasky')
+    //     store.join('#Metako')
+    //     store.join('#landail')
+    //     store.join('#DarkSaber2k')
+    //     store.join('#maurice_33')
+    //     store.join('#Aquas')
+    //     store.join('#Fiercekyo')
+    //     store.join('#mulsqi')
+    //     store.join('#bafael')
+    //     store.join('#theboyks')
+    //     store.join('#Raikou')
+    //     store.join('#perpetualmm')
+    //     store.join('#Bingchang')
+    //     store.join('#frokenok')
+    //     store.join('#vultus')
+    //     store.join('#neohart')
+    //     store.join('#zetsubera')
+    //     store.join('#procplays')
+    //     store.join('#lazerlong')
+    //     store.join('#testrunner')
+    //     store.join('#jiseed')
+    //     store.join('#xxxindyxxx')
+    //     store.join('#narcissawright')
+    //     store.join('#Goati_')
+    //     store.join('#TheLCC')
+    //     store.join('#azureseishin')
+    //     store.join('#pykn')
+    //     store.join('#jiggeh')
+    //     store.join('#chuboh')
+    //     store.join('#UFotekkie')
+    //     store.join('#Ty2358')
+    //     store.join('#sakegeist')
+    //     store.join('#klaige')
+    //     store.join('#Go1den')
+    //     store.join('#capnclever')
+    //     store.join('#omnigamer')
+    //     store.join('#sylux98')
+    //     store.join('#swordsmankirby')
+    //     store.join('#Macaw45')
+    //     store.join('#freddeh')
+    //     store.join('#ghou02')
+    //     store.join('#tterraj42')
+    //     store.join('#superKing13')
+    //     store.join('#CavemanDCJ')
+    //     store.join('#yagamoth')
+    //     store.join('#shadowJacky')
+    //     store.join('#Jenja23')
+    // }, 4000)
+
+    await this.client.join(channel).then((data) => {
+      this.channels.set(channel, {
+        key: channel,
+        color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+        joined: true,
+        autoJoin: true,
+      })
+      // Save to localStorage
+      LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
+      this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
+      // console.log(toJS(this.channels))
+      // console.log(toJS(this.joinedChannels))
+      return true
+    })

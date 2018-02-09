@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 
 // Mobx
-import { observer, observable} from 'mobx-react'
+import { observer} from 'mobx-react'
 import store from './store/store';
 import { client_id } from './store/store'
 
@@ -43,9 +43,7 @@ class App extends Component {
     }
   }
 
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   render() {
     return (
@@ -74,6 +72,7 @@ class LoginLayout extends Component {
           <div>
             <Login style={{}} client_id={client_id} />
           </div>
+          <div style={{visibility: 'hidden'}}><WindowDimensions /></div>
         </Grid>
       </Grid>
     )

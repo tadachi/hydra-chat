@@ -10,65 +10,61 @@ import AddCircleOutline from 'material-ui-icons/AddCircleOutline'
 import HighlightOff from 'material-ui-icons/HighlightOff'
 
 // Utility
-import { clean } from '../utility/utility'
+import queue from 'async/queue'
+import { jsonToMap } from '../utility/JsonMapUtil'
+import { LOCAL_STORAGE, CHANNELS } from '../utility/localStorageWrapper'
+
 
 @observer
 class ChannelManager extends Component {
 
   componentDidMount() {
-    // setTimeout(() => {
-    //     store.join('#icarusFW')
-    //     store.join('#Pasky')
-    //     store.join('#Metako')
-    //     store.join('#landail')
-    //     store.join('#DarkSaber2k')
-    //     store.join('#maurice_33')
-    //     store.join('#Aquas')
-    //     store.join('#Fiercekyo')
-    //     store.join('#mulsqi')
-    //     store.join('#bafael')
-    //     store.join('#theboyks')
-    //     store.join('#Raikou')
-    //     store.join('#perpetualmm')
-    //     store.join('#Bingchang')
-    //     store.join('#frokenok')
-    //     store.join('#vultus')
-    //     store.join('#neohart')
-    //     store.join('#zetsubera')
-    //     store.join('#procplays')
-    //     store.join('#lazerlong')
-    //     store.join('#testrunner')
-    //     store.join('#jiseed')
-    //     store.join('#xxxindyxxx')
-    //     store.join('#narcissawright')
-    //     store.join('#Goati_')
-    //     store.join('#TheLCC')
-    //     store.join('#azureseishin')
-    //     store.join('#pykn')
-    //     store.join('#jiggeh')
-    //     store.join('#chuboh')
-    //     store.join('#UFotekkie')
-    //     store.join('#Ty2358')
-    //     store.join('#sakegeist')
-    //     store.join('#klaige')
-    //     store.join('#Go1den')
-    //     store.join('#capnclever')
-    //     store.join('#omnigamer')
-    //     store.join('#sylux98')
-    //     store.join('#swordsmankirby')
-    //     store.join('#Macaw45')
-    //     store.join('#freddeh')
-    //     store.join('#ghou02')
-    //     store.join('#tterraj42')
-    //     store.join('#superKing13')
-    //     store.join('#CavemanDCJ')
-    //     store.join('#yagamoth')
-    //     store.join('#shadowJacky')
-    //     store.join('#Jenja23')
-    // }, 4000)
+    this.updateStreamersTimerID = setInterval(
+      () => {
+        if (this.oAuth) {
+          store.updateStreamers()
+        }
+      },
+      120000 // 2 minutes or 120 seconds
+    )
+
+
+
+    setTimeout(() => {
+      async function process(arr) {
+        for (const item of arr) {
+          await store.join(item)
+        }
+      }
+
+      let arr = []
+      try {
+        if (store.oAuth) {
+          if (LOCAL_STORAGE.getItem(CHANNELS)) {
+            console.log(jsonToMap(LOCAL_STORAGE.getItem(CHANNELS)))
+            const channels = jsonToMap(LOCAL_STORAGE.getItem(CHANNELS))
+            for (const [k, v] of channels.entries()) {
+              if (v.autoJoin === true) {
+                arr.push(k)
+              } else {
+                store.addChannel(k)
+              }
+            }
+            process(arr)
+          }
+
+        }
+
+      } catch (err) {
+        console.log(err)
+      }
+
+    }, 5000)
+
   }
 
   componentWillUnmount() {
+    clearInterval(this.updateStreamersTimerID);
   }
 
   render() {

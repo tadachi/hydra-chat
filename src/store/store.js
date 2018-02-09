@@ -11,6 +11,10 @@ import _ from 'lodash'
 // Material-UI
 import { createMuiTheme } from 'material-ui/styles'
 
+// Utility
+import { LOCAL_STORAGE, CHANNELS } from '../utility/localStorageWrapper'
+import { mapToJson } from '../utility/JsonMapUtil'
+
 // Package.json
 // import packageJson from '../../package.json'
 
@@ -68,6 +72,7 @@ class Store {
   @observable msg_id = 0
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
+  @observable messages = []
 
   // Login
   @observable twitchLoginUrl = `https://api.twitch.tv/kraken/oauth2/authorize
@@ -75,6 +80,8 @@ class Store {
 &redirect_uri=${redirect_uri}
 &response_type=token
 &scope=openid+chat_login+user_read`
+
+  updateStreamersTimerID
 
   /**
    * Set access token (oAuth)
@@ -190,28 +197,63 @@ class Store {
    * @param {any} channel 
    * @memberof Store
    */
-  @action join(channel) {
-    channel = clean(channel)
+  @action async join(channel) {
+    // channel = clean(channel)
+    // return this.client.join(channel).then((data) => {
+    //   this.channels.set(channel, {
+    //     key: channel,
+    //     color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+    //     joined: true,
+    //     autoJoin: true,
+    //   })
+    //   // Save to localStorage
+    //   LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
+    //   this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
+    //   // console.log(toJS(this.channels))
+    //   // console.log(toJS(this.joinedChannels))
+    //   return true
+    // })
+
     try {
       if (this.streams.get(channel)) {
-        this.client.join(channel).then((data) => {
+        const result = await this.client.join(channel).then((data) => {
           this.channels.set(channel, {
             key: channel,
             color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
             joined: true,
-            autojoin: false
+            autoJoin: true,
           })
+          // Save to localStorage
+          LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
-          console.log(toJS(this.channels))
-          console.log(toJS(this.joinedChannels))
+          // console.log(toJS(this.channels))
+          // console.log(toJS(this.joinedChannels))
+          return true
         })
+        return result
       } else {
         console.log(`${channel} not found/online. Will not join.`)
       }
     } catch (err) {
       console.log(err)
+      return false
     }
 
+  }
+
+  /**
+   * Add a channel but do not join it
+   * 
+   * @param {any} channel 
+   * @memberof Store
+   */
+  @action addChannel(channel) {
+    this.channels.set(channel, {
+      key: channel,
+      color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+      joined: false
+    })
+    LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
   }
 
   /**
@@ -220,26 +262,31 @@ class Store {
    * @param {any} channel 
    * @memberof Store
    */
-  @action leave(channel) {
+  @action async leave(channel) {
     channel = clean(channel)
     try {
       if (this.streams.get(channel)) {
-        this.client.part(channel).then((data) => {
+        const result = await this.client.part(channel).then((data) => {
           // const autojoin = this.channels.get(channel).autojoin
           // const color = this.channels.get(channel).color
           this.channels.set(channel, {
             key: channel,
             joined: false,
             // color: color,
-            // autojoin: autojoin
+            autoJoin: false,
           })
+          // Save to localStorage
+          LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           console.log(toJS(this.channels))
           console.log(toJS(this.joinedChannels))
+          return true
         })
+        return result
       }
     } catch (err) {
       console.log(err)
+      return false
     }
   }
 
@@ -274,6 +321,8 @@ class Store {
   @action handleDrawerOpen() {
     this.drawerOpen = !this.drawerOpen
   }
+
+
 }
 
 function randomIntFromInterval(min, max) {
