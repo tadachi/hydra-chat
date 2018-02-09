@@ -1,7 +1,15 @@
 # List of TODOS
 
+### High Priority
+* Migrate to new Twitch API during/after 2018
+
 * Register moderator commands so spam can be deleted, etc.
 
+* Support subscriber emotes
+
+* Figure how to proceed after Chrome distrusts Symantec certificates completely
+
+### Low Priority
 * OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)
 
 * Color picker
@@ -19,14 +27,12 @@
 
 * Catch all app stopping errors 
 
-* Support subscriber emotes
-
 * Register urls in chat so you can click and visit them
 
 * Save the access token and permissions in LocalStorage
 
 * remove queryString from the URL so to not alarm the User
 
-* Figure out what to do after Chrome distrusts Symantec certificates
+* Change favicon to an inactive version when there are no channels joined
 
-* Migrate to new Twitch API during/after 2018
+* Click on user avatar to go to their twitch profile

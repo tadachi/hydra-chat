@@ -28,8 +28,6 @@ class ChannelManager extends Component {
       120000 // 2 minutes or 120 seconds
     )
 
-
-
     setTimeout(() => {
       async function process(arr) {
         for (const item of arr) {
@@ -52,13 +50,10 @@ class ChannelManager extends Component {
             }
             process(arr)
           }
-
         }
-
       } catch (err) {
         console.log(err)
       }
-
     }, 5000)
 
   }

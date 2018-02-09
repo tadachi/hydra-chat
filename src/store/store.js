@@ -198,22 +198,6 @@ class Store {
    * @memberof Store
    */
   @action async join(channel) {
-    // channel = clean(channel)
-    // return this.client.join(channel).then((data) => {
-    //   this.channels.set(channel, {
-    //     key: channel,
-    //     color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
-    //     joined: true,
-    //     autoJoin: true,
-    //   })
-    //   // Save to localStorage
-    //   LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
-    //   this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
-    //   // console.log(toJS(this.channels))
-    //   // console.log(toJS(this.joinedChannels))
-    //   return true
-    // })
-
     try {
       if (this.streams.get(channel)) {
         const result = await this.client.join(channel).then((data) => {
@@ -238,7 +222,6 @@ class Store {
       console.log(err)
       return false
     }
-
   }
 
   /**

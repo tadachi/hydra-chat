@@ -104,8 +104,9 @@ class MainLayout extends Component {
               <div><WindowDimensions /></div>
               <div>{store.userName}</div>
               {/* <div>{store.oAuth}</div> */}
-              <div>{store.systemTheme}</div>
-              <div>{store.msg_id}</div>
+              <div>System Theme: {store.systemTheme}</div>
+              <div># of Messages: {store.msg_id}</div>
+              <div># of Channels Joined: {store.joinedChannels.length}</div>
               <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
               <div>scrollToEnd: {String(store.scrollToEnd)}</div>
               <div>channelSelectValue: {store.channelSelectValue}</div>

@@ -140,7 +140,6 @@ class Chat extends Component {
     }
 
     store.client.on('chat', (channel, userstate, message, self) => {
-      // let newMessages = this.state.messages
       const time = moment().format('h:mm:ss')
       // Save messages incase user exits
       const messageObj = { channel: channel, userstate: userstate, message: message, time: time }
@@ -152,11 +151,7 @@ class Chat extends Component {
       // Step 2
       const newMessage = processMessage(channel, msg, key)
       // Step 3
-      // newMessages.push(newMessage)
       store.messages.push(newMessage)
-      // this.setState({
-      //   messages: newMessages
-      // })
 
       this.forceUpdate()
 
@@ -177,159 +172,155 @@ class Chat extends Component {
       truncatedMessages.splice(0, 350)
       store.messages = truncatedMessages
     }
-
-    // const truncatedMessages = this.state.messages
-    // if (truncatedMessages.length > 750) {
-    //   truncatedMessages.splice(0, 350)
-    //   this.setState({
-    //     messages: truncatedMessages
-    //   })
-    // }
   }
 
-    parseForEmotes(message, channel) {
-      let split_message = message.split(' ')
-      for (let i in split_message) {
-        const code = split_message[i]
-        if (twitch_emotes_map.has(code)) {
-          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${twitch_emotes_map.get(code)} />`
-        }
-        if (bttv_emotes_map.has(code)) {
-          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${bttv_emotes_map.get(code)} />`
-        }
-        if (ffz_emotes_map.has(channel)) {
-          // console.log(ffz_emotes_map)
-          if (ffz_emotes_map.get(channel).has(code)) {
-            split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
-          }
-        }
+  parseForEmotes(message, channel) {
+    let split_message = message.split(' ')
+    for (let i in split_message) {
+      const code = split_message[i]
+      if (twitch_emotes_map.has(code)) {
+        split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${twitch_emotes_map.get(code)} />`
       }
-      return ReactHtmlParser(split_message.join(' '));
-    }
-
-    sendMessage(event) {
-      const message = this.messageInput.value
-      let channel = store.joinedChannels[store.channelSelectValue].key
-
-      if (event.key === 'Enter') {
-        event.preventDefault() // Prevents newlines from occuring in the text area
-
-        if (message === '') { return }
-
-        try {
-          store.client.say(channel, message).then((data) => {
-            this.scrollToBottom()
-            console.log(`${channel} ${message}`)
-          })
-        } catch (err) {
-          console.log(err)
-        }
-
-        this.messageInput.value = ''
+      if (bttv_emotes_map.has(code)) {
+        split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${bttv_emotes_map.get(code)} />`
       }
-    }
-
-    handleChange(e) {
-      const index = parseInt(e.target.value, 10)
-      console.log(index + ' ' + store.joinedChannels[index].key)
-      store.channelSelectValue = index
-      // store.channelSelectValue = parseInt(event.target.value, 10) //Use 10 for radix i.e base10
-    }
-
-    handleChatScroll() {
-      // console.log(this.chatScroll.scrollHeight )
-      if (this.chatScroll.scrollHeight - Math.ceil(this.chatScroll.scrollTop) <= this.chatScroll.clientHeight) {
-        store.scrollToEnd = true
-        this.scrollToBottom()
-      } else {
-        if (store.scrollToEnd !== false) {
-          store.scrollToEnd = false
+      if (ffz_emotes_map.has(channel)) {
+        // console.log(ffz_emotes_map)
+        if (ffz_emotes_map.get(channel).has(code)) {
+          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
         }
       }
     }
+    return ReactHtmlParser(split_message.join(' '));
+  }
 
-    scrollToBottom() {
-      const chat = document.getElementById('chat');
-      store.scrollToEnd = true
-      chat.scrollTop = chat.scrollHeight;
-      // this.messagesEnd.scrollIntoView({ behavior: "instant" })
-    }
+  sendMessage(event) {
+    const message = this.messageInput.value
+    let channel = store.joinedChannels[store.channelSelectValue].key
 
-    switchChannel(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault() // Prevents newlines from occuring in the text area
+
+      if (message === '') { return }
+
       try {
-        if (event.key === 'ArrowUp') {
-          if (store.channelSelectValue < store.joinedChannels.length - 1) {
-            store.channelSelectValue += 1
-          } else {
-            store.channelSelectValue = 0
-          }
-        }
-        if (event.key === 'ArrowDown') {
-          if (store.channelSelectValue < store.joinedChannels.length && store.channelSelectValue > 0) {
-            store.channelSelectValue -= 1
-          } else {
-            store.channelSelectValue = store.joinedChannels.length - 1
-          }
-        }
+        store.client.say(channel, message).then((data) => {
+          this.scrollToBottom()
+          console.log(`${channel} ${message}`)
+        })
       } catch (err) {
         console.log(err)
-        store.channelSelectValue = 0
       }
-    }
 
-    render() {
-      let channels = []
-      let i = 0
-      for (const channel of toJS(store.joinedChannels)) {
-        channels.push(<MenuItem style={{ backgroundColor: this.props.theme.palette.background.default }} key={channel.key} value={i}>{channel.key}</MenuItem>)
-        i += 1
-      }
-      const channelSelect = channels.length > 0 ?
-        <Select style={{}} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={true}>
-          {channels}
-        </Select> :
-        null
-      let w = 500
-      store.drawerOpen
-        ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
-
-      const chatArea =
-        <div style={{ width: w, height: store.height * 7.6 / 9, overflowY: 'scroll', overflowX: 'hidden', border: '1px solid black', marginTop: '10px', marginLeft: '2px' }} ref={(el) => { this.chatScroll = el }} id={'chat'}>
-          <div>
-            {/* {this.state.messages} */}
-            {store.messages}
-          </div>
-          <div id={'endOfChat'} ref={(el) => { this.messagesEnd = el }} />
-        </div>
-
-      const scrollBottomButton = store.scrollToEnd === false ?
-        <div><Button onClick={this.scrollToBottom.bind(this)}>More Messages Below</Button></div> : <div></div>
-
-      const textAreaChat = store.joinedChannels.length > 0 ?
-        <TextField
-          label={`Send a message to ${store.joinedChannels[store.channelSelectValue].key}..`}
-          helperText={`${store.joinedChannels[store.channelSelectValue].key}`}
-          inputRef={(el) => { this.messageInput = el }}
-          onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
-          multiline={true} fullWidth={true} margin="dense" /> : null
-
-      const drawerIcon = store.drawerOpen ? <LeftArrow /> : <RightArrow />
-      const drawerControl = <IconButton style={{ display: 'block' }} onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
-
-      return (
-        <div>
-          {chatArea}
-          <Grid style={{ width: w - 17, height: store.height * 1 / 9, border: '1px solid black', marginTop: '10px', marginLeft: '2px', }} justify='center' alignItems='center' container spacing={24}>
-            <Grid item xs={1}>{drawerControl}</Grid>
-            <Grid item xs={1}><ChatMenu /></Grid>
-            <Grid item xs>{textAreaChat}</Grid>
-            <Grid item xs={2}>{channelSelect}</Grid>
-            <Grid item xs={2}>{scrollBottomButton}</Grid>
-          </Grid>
-
-        </div>
-      )
+      this.messageInput.value = ''
     }
   }
 
-  export default withTheme()(Chat)
+  handleChange(e) {
+    const index = parseInt(e.target.value, 10)
+    store.channelSelectValue = index
+  }
+
+  handleChatScroll() {
+    // console.log(this.chatScroll.scrollHeight )
+    if (this.chatScroll.scrollHeight - Math.ceil(this.chatScroll.scrollTop) <= this.chatScroll.clientHeight) {
+      store.scrollToEnd = true
+      this.scrollToBottom()
+    } else {
+      if (store.scrollToEnd !== false) {
+        store.scrollToEnd = false
+      }
+    }
+  }
+
+  scrollToBottom() {
+    const chat = document.getElementById('chat');
+    store.scrollToEnd = true
+    chat.scrollTop = chat.scrollHeight;
+    // this.messagesEnd.scrollIntoView({ behavior: "instant" })
+  }
+
+  switchChannel(event) {
+    try {
+      if (event.key === 'ArrowUp') {
+        if (store.channelSelectValue < store.joinedChannels.length - 1) {
+          store.channelSelectValue += 1
+        } else {
+          store.channelSelectValue = 0
+        }
+      }
+      if (event.key === 'ArrowDown') {
+        if (store.channelSelectValue < store.joinedChannels.length && store.channelSelectValue > 0) {
+          store.channelSelectValue -= 1
+        } else {
+          store.channelSelectValue = store.joinedChannels.length - 1
+        }
+      }
+    } catch (err) {
+      console.log(err)
+      store.channelSelectValue = 0
+    }
+  }
+
+  render() {
+    let channels = []
+    let i = 0
+    for (const channel of toJS(store.joinedChannels)) {
+      channels.push(<MenuItem style={{ backgroundColor: this.props.theme.palette.background.default }} key={channel.key} value={i}>{channel.key}</MenuItem>)
+      i += 1
+    }
+    const channelSelect = channels.length > 0 ?
+      <Select style={{}} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={true}>
+        {channels}
+      </Select> :
+      null
+    let w = 500
+    store.drawerOpen
+      ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
+
+    const chatArea =
+      <div style={{
+        width: w, height: store.height * 7.6 / 9,
+        overflowY: 'scroll', overflowX: 'hidden',
+        border: '1px solid black',
+        marginTop: '10px', marginLeft: '2px'
+      }}
+        ref={(el) => { this.chatScroll = el }}
+        id={'chat'}>
+        <div>
+          {store.messages}
+        </div>
+        <div id={'endOfChat'} ref={(el) => { this.messagesEnd = el }} />
+      </div>
+
+    const scrollBottomButton = store.scrollToEnd === false ?
+      <div><Button onClick={this.scrollToBottom.bind(this)}>More Messages Below</Button></div> : <div></div>
+
+    const textAreaChat = store.joinedChannels.length > 0 ?
+      <TextField
+        label={`Send a message to ${store.joinedChannels[store.channelSelectValue].key}..`}
+        helperText={`${store.joinedChannels[store.channelSelectValue].key}`}
+        inputRef={(el) => { this.messageInput = el }}
+        onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
+        multiline={true} fullWidth={true} margin="dense" /> : null
+
+    const drawerIcon = store.drawerOpen ? <LeftArrow /> : <RightArrow />
+    const drawerControl = <IconButton style={{ display: 'block' }} onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
+
+    return (
+      <div>
+        {chatArea}
+        <Grid style={{ width: w - 17, height: store.height * 1 / 9, border: '1px solid black', marginTop: '10px', marginLeft: '2px', }} justify='center' alignItems='center' container spacing={24}>
+          <Grid item xs={1}>{drawerControl}</Grid>
+          <Grid item xs={1}><ChatMenu /></Grid>
+          <Grid item xs>{textAreaChat}</Grid>
+          <Grid item xs={2}>{channelSelect}</Grid>
+          <Grid item xs={2}>{scrollBottomButton}</Grid>
+        </Grid>
+
+      </div>
+    )
+  }
+}
+
+export default withTheme()(Chat)
