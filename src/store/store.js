@@ -22,16 +22,19 @@ import { mapToJson } from '../utility/JsonMapUtil'
 // const client_id = 'yc5s3u4bv8en92xxii4vf3xkwanlyb'
 // const redirect_uri = 'https://tadachi.github.com/hydra-chat'
 // const secure = true
+// const debug = false
 
 // Development
 const client_id = 'gpa5zi9y5d70q9b2lcpcwvikp7mek0'
 const redirect_uri = 'http://localhost:3000/'
 const secure = false
+const debug = true
 
 const max_length = web_safe_colors.length - 1 // off by one
 
 class Store {
   // App
+  developmentMode = debug
   @observable systemTheme = 'dark' // dark or light
   @observable systemThemes = ['dark', 'light']
   @observable systemThemeValue = 0
