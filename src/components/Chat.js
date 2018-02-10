@@ -17,6 +17,7 @@ import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import RightArrow from 'material-ui-icons/KeyboardArrowRight'
 import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
+import ArrowDownward from 'material-ui-icons/ArrowDownward'
 import Grid from 'material-ui/Grid'
 
 // Components
@@ -42,8 +43,16 @@ for (let i = 0; i < bttv_emotes.length; i++) {
   bttv_emotes_map.set(bttv_emotes[i].code, `https://cdn.betterttv.net/emote/${bttv_emotes[i].id}/3x`)
 }
 
+// BTTV
+let bttv_user_emotes_map = new Map()
 // FFZ
 let ffz_emotes_map = new Map()
+
+window.twitch_emotes_map = twitch_emotes_map
+window.ffz_emotes_map = ffz_emotes_map
+window.bttv_emotes_map = bttv_emotes_map
+window.bttv_user_emotes_map = bttv_user_emotes_map
+
 
 async function getFFZEmotes(name) {
   let config = {
@@ -80,14 +89,45 @@ async function goFFZ(name) {
   return req
 }
 
+async function getBTTVEmotes(name) {
+  let config = {
+    url: `${name}`,
+    method: 'get',
+    baseURL: 'https://api.betterttv.net/2/channels/',
+    params: { limit: 100 }
+  }
+
+  const req = await axios.request(config).then((response) => {
+    return response
+  }).catch((err) => {
+    return undefined
+  })
+
+  return req
+}
+
+async function goBTTV(name) {
+  const req = await getBTTVEmotes(name)
+    .then((response) => {
+      if (response) {
+        bttv_user_emotes_map.set(name, new Map())
+        const emotes = response.data.emotes // [id: "5912...", channel: 'scardor", code: "Hollup, imageType: "png""]
+        for (const emote of emotes) {
+          bttv_user_emotes_map.get(name).set(emote.code, `https://cdn.betterttv.net/emote/${emote.id}/3x`)
+        }
+        return emotes
+      } else {
+        return undefined
+      }
+    })
+
+  return req
+}
+
 @observer
 class Chat extends Component {
   constructor(props) {
     super(props)
-
-    this.state = {
-      messages: []
-    }
 
     this.messageCache = []
     this.regex_channel = /\/\#\S+|\S+\ +/ //['/#Tod', /#Tod    '] OK ['#Tod', '#Tod  '] Not OK.
@@ -98,15 +138,9 @@ class Chat extends Component {
     store.client.on('join', (channel, username, self) => {
       if (username === store.userName) {
         goFFZ(removeHashtag(channel))
+        goBTTV(removeHashtag(channel))
       }
     })
-
-    this.truncateTimerID = setInterval(
-      () => {
-        this.truncateMessages()
-      },
-      120000
-    )
 
     let m = (channel, userstate, message, time, key) => {
       const k1 = `${channel}-${key}`
@@ -158,7 +192,42 @@ class Chat extends Component {
       if (store.scrollToEnd) {
         this.scrollToBottom()
       }
-    });
+    })
+
+    this.truncateTimerID = setInterval(
+      () => {
+        this.truncateMessages()
+      },
+      120000
+    )
+
+    this.saveMessagesID = setInterval(
+      () => {
+        if (this.messageCache.length > 0) {
+          LOCAL_STORAGE.setItem(MESSAGES, arrayToJson(this.messageCache))
+        }
+      },
+      10000 // 10 seconds
+    )
+
+    //Load past messages
+    if (LOCAL_STORAGE.getItem(MESSAGES)) {
+      const messageArrayObj = jsonToArray(LOCAL_STORAGE.getItem(MESSAGES))
+
+      for (const obj of messageArrayObj) {
+        const channel = obj.channel
+        const userstate = obj.userstate
+        const message = obj.message
+        const time = obj.time
+        const key = store.msg_id
+        store.msg_id = store.msg_id + 1
+
+        const msg = m(channel, userstate, message, time)
+        const newMessage = processMessage(channel, msg, key, 0.75)
+        store.messages.push(newMessage)
+      }
+    }
+
   }
 
   componentWillUnmount() {
@@ -171,6 +240,9 @@ class Chat extends Component {
     if (truncatedMessages.length > 750) {
       truncatedMessages.splice(0, 350)
       store.messages = truncatedMessages
+    }
+    if (this.messageCache.length > 750) {
+      this.messageCache = this.messageCache.splice(0, 350)
     }
   }
 
@@ -188,6 +260,11 @@ class Chat extends Component {
         // console.log(ffz_emotes_map)
         if (ffz_emotes_map.get(channel).has(code)) {
           split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
+        }
+      }
+      if (bttv_user_emotes_map.has(channel)) {
+        if (bttv_user_emotes_map.get(channel).has(code)) {
+          split_message[i] = `<img style='vertical-align: middle: padding: 1px;' height='38' src=${bttv_user_emotes_map.get(channel).get(code)} />`
         }
       }
     }
@@ -275,12 +352,11 @@ class Chat extends Component {
       </Select> :
       null
     let w = 500
-    store.drawerOpen
-      ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
+    store.drawerOpen ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
 
     const chatArea =
       <div style={{
-        width: w, height: store.height * 7.6 / 9,
+        width: w, height: store.height - 100,
         overflowY: 'scroll', overflowX: 'hidden',
         border: '1px solid black',
         marginTop: '10px', marginLeft: '2px'
@@ -294,30 +370,35 @@ class Chat extends Component {
       </div>
 
     const scrollBottomButton = store.scrollToEnd === false ?
-      <div><Button onClick={this.scrollToBottom.bind(this)}>More Messages Below</Button></div> : <div></div>
+      <IconButton onClick={this.scrollToBottom.bind(this)}><ArrowDownward /></IconButton> :
+      <IconButton disabled onClick={this.scrollToBottom.bind(this)}><ArrowDownward /></IconButton>
 
     const textAreaChat = store.joinedChannels.length > 0 ?
       <TextField
-        label={`Send a message to ${store.joinedChannels[store.channelSelectValue].key}..`}
-        helperText={`${store.joinedChannels[store.channelSelectValue].key}`}
+        placeholder={`${store.joinedChannels[store.channelSelectValue].key}`}
         inputRef={(el) => { this.messageInput = el }}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
-        multiline={true} fullWidth={true} margin="dense" /> : null
+        fullWidth />
+      : null
 
     const drawerIcon = store.drawerOpen ? <LeftArrow /> : <RightArrow />
-    const drawerControl = <IconButton style={{ display: 'block' }} onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
+    const drawerControl = <IconButton onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
 
     return (
       <div>
         {chatArea}
-        <Grid style={{ width: w - 17, height: store.height * 1 / 9, border: '1px solid black', marginTop: '10px', marginLeft: '2px', }} justify='center' alignItems='center' container spacing={24}>
-          <Grid item xs={1}>{drawerControl}</Grid>
-          <Grid item xs={1}><ChatMenu /></Grid>
-          <Grid item xs>{textAreaChat}</Grid>
-          <Grid item xs={2}>{channelSelect}</Grid>
-          <Grid item xs={2}>{scrollBottomButton}</Grid>
-        </Grid>
-
+        <div style={{
+          width: w - 17, height: 65,
+          marginTop: '10px', marginLeft: '2px',
+          display: 'flex', flexDirection: 'row',
+          flexWrap: 'nowrap', justifyContent: 'space-evenly'
+        }}>
+          <div style={{ margin: 'auto', }}>{drawerControl}</div>
+          <div style={{ margin: 'auto', }}><ChatMenu /></div>
+          <div style={{ margin: 'auto', }}>{scrollBottomButton}</div>
+          <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, }}>{textAreaChat}</div>
+          <div style={{ margin: 'auto', marginLeft: '5px', }}>{channelSelect}</div>
+        </div>
       </div>
     )
   }

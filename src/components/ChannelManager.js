@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 // Mobx
-import { observer } from 'mobx-react'
+import { observer, } from 'mobx-react'
+import { toJS, } from 'mobx';
 import store from '../store/store';
 
 // Material-ui
@@ -10,10 +11,8 @@ import AddCircleOutline from 'material-ui-icons/AddCircleOutline'
 import HighlightOff from 'material-ui-icons/HighlightOff'
 
 // Utility
-import queue from 'async/queue'
 import { jsonToMap } from '../utility/JsonMapUtil'
 import { LOCAL_STORAGE, CHANNELS } from '../utility/localStorageWrapper'
-
 
 @observer
 class ChannelManager extends Component {
@@ -21,8 +20,34 @@ class ChannelManager extends Component {
   componentDidMount() {
     this.updateStreamersTimerID = setInterval(
       () => {
-        if (this.oAuth) {
-          store.updateStreamers()
+        if (store.oAuth) {
+          store.updateStreamers().then((streams) => {
+            // console.log('streams', streams)
+            // console.log('channels', toJS(store.channels))
+            const channels = toJS(store.channels.entries())
+            for (const [key, value] of channels) {
+              const joined = toJS(value).joined
+              let stay = true
+
+              for (const [stream, value] of streams) {
+                if (key === stream) {
+                  stay = true
+                  break
+                  // Everything is good
+                } else {
+                  stay = false
+                }
+              }
+
+              if (stay === false && joined === true) {
+                store.leave(key).then(() => {
+                  this.forceUpdate()
+                  console.log(key, stay, toJS(value))
+                })
+              }
+
+            }
+          })
         }
       },
       120000 // 2 minutes or 120 seconds
@@ -39,7 +64,6 @@ class ChannelManager extends Component {
       try {
         if (store.oAuth) {
           if (LOCAL_STORAGE.getItem(CHANNELS)) {
-            console.log(jsonToMap(LOCAL_STORAGE.getItem(CHANNELS)))
             const channels = jsonToMap(LOCAL_STORAGE.getItem(CHANNELS))
             for (const [k, v] of channels.entries()) {
               if (v.autoJoin === true) {
@@ -106,7 +130,10 @@ class ChannelManager extends Component {
     }
 
     return (
-      <div id='ChannelManager' >
+      <div id='ChannelManager' style={{
+        overflowY: 'hidden',
+        overflowX: 'hidden'
+      }}>
         {channels}
       </div>
     )
@@ -132,7 +159,6 @@ let ChannelManagerCSS = {
     fontStyle: 'italic',
     opacity: '0.8',
     whiteSpace: 'nowrap',
-    overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
   viewers: {

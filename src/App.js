@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 
 // Mobx
-import { observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 import store from './store/store';
 import { client_id } from './store/store'
 
@@ -36,14 +36,16 @@ class App extends Component {
         store.login().then(() => {
           Main = <MainLayout />
           ChatComponent = <Chat />
-          store.updateStreamers()
+          store.updateStreamers().then((streams) => {
+            console.log(streams)
+          })
           this.forceUpdate()
         })
       })
     }
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() { }
 
   render() {
     return (
@@ -72,7 +74,7 @@ class LoginLayout extends Component {
           <div>
             <Login style={{}} client_id={client_id} />
           </div>
-          <div style={{visibility: 'hidden'}}><WindowDimensions /></div>
+          <div style={{ visibility: 'hidden' }}><WindowDimensions /></div>
         </Grid>
       </Grid>
     )
@@ -100,16 +102,19 @@ class MainLayout extends Component {
             <div style={{ marginLeft: '4%' }}>
               {store.oAuth ?
                 <UserPaper style={{ marginTop: '2%' }} name={store.userName} img={store.userLogo} /> : null}
-              <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
-              <div><WindowDimensions /></div>
-              <div>{store.userName}</div>
-              {/* <div>{store.oAuth}</div> */}
-              <div>System Theme: {store.systemTheme}</div>
-              <div># of Messages: {store.msg_id}</div>
-              <div># of Channels Joined: {store.joinedChannels.length}</div>
-              <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
-              <div>scrollToEnd: {String(store.scrollToEnd)}</div>
-              <div>channelSelectValue: {store.channelSelectValue}</div>
+              {store.developmentMode ?
+                <div>
+                  <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
+                  <div><WindowDimensions /></div>
+                  <div>{store.userName}</div>
+                  <div>System Theme: {store.systemTheme}</div>
+                  <div># of Messages: {store.msg_id}</div>
+                  <div># of Channels Joined: {store.joinedChannels.length}</div>
+                  <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
+                  <div>scrollToEnd: {String(store.scrollToEnd)}</div>
+                  <div>channelSelectValue: {store.channelSelectValue}</div>
+                </div>
+                : null}
             </div>
             <ChannelManager />
           </Grid>
