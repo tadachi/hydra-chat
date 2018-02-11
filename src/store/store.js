@@ -49,7 +49,7 @@ class Store {
   @observable width = 0
   @observable height = 0
   @observable drawerOpen = true
-  @observable drawerWidth = 300
+  @observable drawerWidth = 240
 
   // Channel Manager
   @observable streams
@@ -68,6 +68,8 @@ class Store {
     },
   }
   @observable channels = new Map()
+  widthBreakPoint = 530
+  mobileScreenSize = false
 
   // Chat
   @observable channelSelectValue = 0
@@ -251,7 +253,7 @@ class Store {
   @action async leave(channel) {
     channel = clean(channel)
     try {
-      if (this.streams.get(channel)) {
+      if (this.channels.get(channel)) {
         const result = await this.client.part(channel).then((data) => {
           // const autojoin = this.channels.get(channel).autojoin
           // const color = this.channels.get(channel).color
@@ -287,6 +289,7 @@ class Store {
   @action updateDimensions(w, h) {
     this.width = w
     this.height = h + 10 //Covers missing pixels at the bottom of the window
+    this.mobileScreensize = (this.width < this.widthBreakPoint) ? true : false
   }
 
   /**

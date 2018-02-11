@@ -4,7 +4,6 @@ import axios from 'axios'
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react'
 import store from '../store/store';
-import _ from 'lodash'
 import ReactHtmlParser from 'react-html-parser';
 
 // Material-ui
@@ -12,13 +11,11 @@ import { withTheme } from 'material-ui/styles'
 import { MenuItem } from 'material-ui/Menu';
 import { blueGrey } from 'material-ui/colors'
 import Select from 'material-ui/Select'
-import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import RightArrow from 'material-ui-icons/KeyboardArrowRight'
 import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowDownward from 'material-ui-icons/ArrowDownward'
-import Grid from 'material-ui/Grid'
 
 // Components
 import ChatMenu from './ChatMenu'
@@ -342,24 +339,29 @@ class Chat extends Component {
   render() {
     let channels = []
     let i = 0
+    let w = 500
+    store.drawerOpen ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
+
     for (const channel of toJS(store.joinedChannels)) {
       channels.push(<MenuItem style={{ backgroundColor: this.props.theme.palette.background.default }} key={channel.key} value={i}>{channel.key}</MenuItem>)
       i += 1
     }
     const channelSelect = channels.length > 0 ?
-      <Select style={{}} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={true}>
+      <Select style={{ maxWidth: 84 }} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={false}>
         {channels}
       </Select> :
       null
-    let w = 500
-    store.drawerOpen ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
 
+    const border = store.mobileScreenSize ? { border: '1px solid black' } : { borderBottom: '1px solid black' }
     const chatArea =
       <div style={{
-        width: w, height: store.height - 100,
-        overflowY: 'scroll', overflowX: 'hidden',
-        border: '1px solid black',
-        marginTop: '10px', marginLeft: '2px'
+        ...{
+          width: '100%',
+          height: store.height - 60,
+          overflowY: 'scroll',
+          overflowX: 'hidden',
+        },
+        ...border
       }}
         ref={(el) => { this.chatScroll = el }}
         id={'chat'}>
@@ -375,7 +377,10 @@ class Chat extends Component {
 
     const textAreaChat = store.joinedChannels.length > 0 ?
       <TextField
-        placeholder={`${store.joinedChannels[store.channelSelectValue].key}`}
+        placeholder=
+        {store.joinedChannels[store.channelSelectValue] ? `${store.joinedChannels[store.channelSelectValue].key}` :
+        `Send a Message`
+        }
         inputRef={(el) => { this.messageInput = el }}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
         fullWidth />
@@ -385,19 +390,18 @@ class Chat extends Component {
     const drawerControl = <IconButton onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
 
     return (
-      <div>
+      <div style={{ height: store.height }}>
         {chatArea}
         <div style={{
-          width: w - 17, height: 65,
-          marginTop: '10px', marginLeft: '2px',
+          width: w, height: 60,
           display: 'flex', flexDirection: 'row',
           flexWrap: 'nowrap', justifyContent: 'space-evenly'
         }}>
           <div style={{ margin: 'auto', }}>{drawerControl}</div>
           <div style={{ margin: 'auto', }}><ChatMenu /></div>
-          <div style={{ margin: 'auto', }}>{scrollBottomButton}</div>
           <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, }}>{textAreaChat}</div>
-          <div style={{ margin: 'auto', marginLeft: '5px', }}>{channelSelect}</div>
+          <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
+          <div style={{ margin: 'auto', }}>{scrollBottomButton}</div>
         </div>
       </div>
     )

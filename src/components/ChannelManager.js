@@ -10,10 +10,6 @@ import Typography from 'material-ui/Typography';
 import AddCircleOutline from 'material-ui-icons/AddCircleOutline'
 import HighlightOff from 'material-ui-icons/HighlightOff'
 
-// Utility
-import { jsonToMap } from '../utility/JsonMapUtil'
-import { LOCAL_STORAGE, CHANNELS } from '../utility/localStorageWrapper'
-
 @observer
 class ChannelManager extends Component {
 
@@ -25,6 +21,8 @@ class ChannelManager extends Component {
             // console.log('streams', streams)
             // console.log('channels', toJS(store.channels))
             const channels = toJS(store.channels.entries())
+            console.log(channels)
+            console.log(streams)
             for (const [key, value] of channels) {
               const joined = toJS(value).joined
               let stay = true
@@ -38,48 +36,18 @@ class ChannelManager extends Component {
                   stay = false
                 }
               }
-
               if (stay === false && joined === true) {
                 store.leave(key).then(() => {
                   this.forceUpdate()
-                  console.log(key, stay, toJS(value))
+                  console.log(key, stay, toJS(store.channels.get(key)))
                 })
               }
-
             }
           })
         }
       },
       120000 // 2 minutes or 120 seconds
     )
-
-    setTimeout(() => {
-      async function process(arr) {
-        for (const item of arr) {
-          await store.join(item)
-        }
-      }
-
-      let arr = []
-      try {
-        if (store.oAuth) {
-          if (LOCAL_STORAGE.getItem(CHANNELS)) {
-            const channels = jsonToMap(LOCAL_STORAGE.getItem(CHANNELS))
-            for (const [k, v] of channels.entries()) {
-              if (v.autoJoin === true) {
-                arr.push(k)
-              } else {
-                store.addChannel(k)
-              }
-            }
-            process(arr)
-          }
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }, 5000)
-
   }
 
   componentWillUnmount() {
@@ -146,8 +114,7 @@ let ChannelManagerCSS = {
     gridTemplateColumns: '75% 25%',
     gridTemplateRows: '75% 25%',
     border: `1px solid ${store.theme.palette.text.primary}`,
-    marginLeft: '4%',
-    marginTop: '4%',
+    marginTop: '3px',
     padding: '2%',
   },
   streamer: {
@@ -159,6 +126,7 @@ let ChannelManagerCSS = {
     fontStyle: 'italic',
     opacity: '0.8',
     whiteSpace: 'nowrap',
+    overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
   viewers: {

@@ -9,6 +9,8 @@
 
 * Figure how to proceed after Chrome distrusts Symantec certificates completely
 
+* Fix mobile/desktop dimensions
+
 ### Low Priority
 * OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)
 
@@ -36,3 +38,5 @@
 * Change favicon to an inactive version when there are no channels joined
 
 * Click on user avatar to go to their twitch profile
+
+* Show/Remove Timestamps

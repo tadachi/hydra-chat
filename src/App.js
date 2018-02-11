@@ -20,6 +20,8 @@ import Chat from './components/Chat'
 
 //Utility
 import { getParams, getBaseUrl } from './utility/utility'
+import { jsonToMap } from './utility/JsonMapUtil'
+import { LOCAL_STORAGE, CHANNELS } from './utility/localStorageWrapper'
 
 let Main = null
 let ChatComponent = null
@@ -38,8 +40,35 @@ class App extends Component {
           ChatComponent = <Chat />
           store.updateStreamers().then((streams) => {
             console.log(streams)
+            let channelsToJoin = []
+
+            async function process(arr) {
+              for (const item of arr) {
+                await store.join(item)
+              }
+            }
+
+            try {
+              if (LOCAL_STORAGE.getItem(CHANNELS)) {
+                const channels = jsonToMap(LOCAL_STORAGE.getItem(CHANNELS))
+                for (const [k, v] of channels.entries()) {
+                  if (v.autoJoin === true) {
+                    channelsToJoin.push(k)
+                  } else {
+                    store.addChannel(k)
+                  }
+                }
+                process(channelsToJoin)
+              }
+
+            } catch (err) {
+              console.log(err)
+            }
+
+            this.forceUpdate()
+
           })
-          this.forceUpdate()
+
         })
       })
     }
@@ -86,25 +115,25 @@ class MainLayout extends Component {
   render() {
     return (
       <Grid style={{
-        height: store.height,
-        backgroundColor: store.theme.palette.background.default
-      }} container>
+        backgroundColor: store.theme.palette.background.default,
+      }} spacing={0} container>
         {store.drawerOpen ?
           <Grid style={{
             height: store.height,
-            minWidth: store.drawerWidth,
-            maxWidth: store.drawerWidth,
+            minWidth: (store.width < store.widthBreakPoint) ? store.width : store.drawerWidth,
+            maxWidth: (store.width < store.widthBreakPoint) ? '100%' : store.drawerWidth,
             backgroundColor: store.theme.palette.background.default,
             color: store.theme.palette.text.primary,
             overflowY: 'scroll',
             overflowX: 'hidden'
           }} item>
-            <div style={{ marginLeft: '4%' }}>
+            <div style={{ padding: '10px' }}>
               {store.oAuth ?
-                <UserPaper style={{ marginTop: '2%' }} name={store.userName} img={store.userLogo} /> : null}
+                <div style={{position: 'sticky', top: 0}}><UserPaper style={{ marginTop: '5px' }} name={store.userName} img={store.userLogo} /></div> : null}
               {store.developmentMode ?
                 <div>
                   <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
+                  <div><Button onClick={() => store.handleDrawerOpen()}>Close ChannelManager</Button></div>
                   <div><WindowDimensions /></div>
                   <div>{store.userName}</div>
                   <div>System Theme: {store.systemTheme}</div>
@@ -113,6 +142,7 @@ class MainLayout extends Component {
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
                   <div>channelSelectValue: {store.channelSelectValue}</div>
+                  <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
                 </div>
                 : null}
             </div>
@@ -124,10 +154,10 @@ class MainLayout extends Component {
           backgroundColor: store.theme.palette.background.default,
           color: store.theme.palette.text.primary,
           overflowY: 'hidden',
-          overflowX: 'hidden'
+          overflowX: 'hidden',
+          margin: 0,
         }} item xs>
-          <div>{ChatComponent}</div>
-          {/* <div><ThemeSelect /></div> */}
+          <div style={{ display: (store.mobileScreenSize && store.drawerOpen) ? 'none' : 'inline' }}>{ChatComponent}</div>
         </Grid>
       </Grid>
     )
