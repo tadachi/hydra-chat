@@ -394,12 +394,16 @@ class Chat extends Component {
         {chatArea}
         <div style={{
           width: w, height: 60,
-          display: 'flex', flexDirection: 'row',
-          flexWrap: 'nowrap', justifyContent: 'space-evenly'
+          display: 'flex', 
+          flexDirection: 'row',
+          flexWrap: 'nowrap',
+          alignSelf: 'auto',
+          alignContent: 'center',
+          justifyContent: 'center',
         }}>
           <div style={{ margin: 'auto', }}>{drawerControl}</div>
           <div style={{ margin: 'auto', }}><ChatMenu /></div>
-          <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, }}>{textAreaChat}</div>
+          <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
           <div style={{ margin: 'auto', }}>{scrollBottomButton}</div>
         </div>

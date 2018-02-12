@@ -32,6 +32,39 @@ const debug = true
 
 const max_length = web_safe_colors.length - 1 // off by one
 
+let deleteToken = async function (token) {
+  const config = {
+    url: 'oauth2/revoke',
+    method: 'post',
+    baseURL: 'https://api.twitch.tv/kraken',
+    data: {
+      client_id: client_id,
+      token: token,
+    },
+    headers: {
+      'Accept': 'application/vnd.twitchtv.v5+json',
+    },
+  }
+  const req = await axios.request(config).then((response) => {
+    try {
+      if (response.status === 200) {
+        console.log(response)
+        return response
+      }
+    } catch (err) {
+      console.log(err)
+      return response
+    }
+  })
+
+  return req
+
+}
+
+window.deleteToken = deleteToken
+
+
+
 class Store {
   // App
   developmentMode = debug
@@ -87,6 +120,12 @@ class Store {
 &scope=openid+chat_login+user_read`
 
   updateStreamersTimerID
+
+  makeDeleteTokenURL(token) {
+    const url = `https://api.twitch.tv/kraken/oauth2/revoke?client_id=${client_id}&token=${this.oAuth}`
+    
+    return url
+  }
 
   /**
    * Set access token (oAuth)
@@ -310,6 +349,7 @@ class Store {
   @action handleDrawerOpen() {
     this.drawerOpen = !this.drawerOpen
   }
+
 
 
 }

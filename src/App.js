@@ -18,7 +18,6 @@ import Login from './components/Login'
 import ChannelManager from './components/ChannelManager'
 import UserLogo from './components/UserLogo'
 import Chat from './components/Chat'
-// import ThemeSelect from './components/ThemeSelect'
 
 //Utility
 import { getParams, getBaseUrl } from './utility/utility'
@@ -160,6 +159,7 @@ class MainLayout extends Component {
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
                   <div>channelSelectValue: {store.channelSelectValue}</div>
                   <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
+                  <div><Button href={store.makeDeleteTokenURL()}>Logout</Button></div>
                 </div>
                 : null}
             </div>
