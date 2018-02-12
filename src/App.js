@@ -10,11 +10,13 @@ import { client_id } from './store/store'
 import { MuiThemeProvider } from 'material-ui/styles';
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
+import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
+import IconButton from 'material-ui/IconButton'
 
 //Components
 import Login from './components/Login'
 import ChannelManager from './components/ChannelManager'
-import UserPaper from './components/UserPaper'
+import UserLogo from './components/UserLogo'
 import Chat from './components/Chat'
 // import ThemeSelect from './components/ThemeSelect'
 
@@ -30,6 +32,9 @@ class App extends Component {
   componentDidMount() {
     // Fix dimensions to window height
     store.updateDimensions(window.innerWidth, window.innerHeight)
+
+    // Change background color of <body>
+    document.body.style.backgroundColor = store.theme.palette.background.default
 
     const oAuth = getParams(document.location.hash)['access_token']
     if (oAuth) {
@@ -74,7 +79,9 @@ class App extends Component {
     }
   }
 
-  componentWillUnmount() { }
+  componentWillUnmount() {
+    document.body.style.backgroundColor = null
+  }
 
   render() {
     return (
@@ -129,7 +136,17 @@ class MainLayout extends Component {
           }} item>
             <div style={{ padding: '10px' }}>
               {store.oAuth ?
-                <div style={{position: 'sticky', top: 0}}><UserPaper style={{ marginTop: '5px' }} name={store.userName} img={store.userLogo} /></div> : null}
+                <div style={{
+                  position: 'sticky',
+                  top: 0,
+                  height: 60,
+                  display: 'flex', flexDirection: 'row',
+                  flexWrap: 'nowrap', justifyContent: 'space-evenly'
+                }}>
+                  <div style={{ display: 'inline-block' }}><UserLogo style={{ width: '50px', }} name={store.userName} img={store.userLogo} /></div>
+                  <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.handleDrawerOpen()}><LeftArrow style={{ width: '100%' }} /></IconButton></div>
+                </div> : null}
+
               {store.developmentMode ?
                 <div>
                   <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
