@@ -157,11 +157,11 @@ const channelSelect = store.channels.length > 0 ?
 {/* More messages below modal box */ }
 {
   (store.scrollToEnd === false) ?
-  <div style={{ display: 'inline-block', position: 'absolute', top: `${800}px`, marginLeft: '10px', opacity: '0.85', backgroundColor: blueGrey[600], padding: 10, }}
-    onClick={this.scrollToBottom.bind(this)} ref={(el) => { this.moreMessagesBelow = el; }} id={'moreMessagesBelow'}>
-    <div>More Messages Below.</div>
-  </div> :
-  <div></div>
+    <div style={{ display: 'inline-block', position: 'absolute', top: `${800}px`, marginLeft: '10px', opacity: '0.85', backgroundColor: blueGrey[600], padding: 10, }}
+      onClick={this.scrollToBottom.bind(this)} ref={(el) => { this.moreMessagesBelow = el; }} id={'moreMessagesBelow'}>
+      <div>More Messages Below.</div>
+    </div> :
+    <div></div>
 }
 
 onKeyDown = { this.switchChannel.bind(this) }
@@ -181,68 +181,93 @@ render() {
 }
 }
 
-    // setTimeout(() => {
-    //     store.join('#icarusFW')
-    //     store.join('#Pasky')
-    //     store.join('#Metako')
-    //     store.join('#landail')
-    //     store.join('#DarkSaber2k')
-    //     store.join('#maurice_33')
-    //     store.join('#Aquas')
-    //     store.join('#Fiercekyo')
-    //     store.join('#mulsqi')
-    //     store.join('#bafael')
-    //     store.join('#theboyks')
-    //     store.join('#Raikou')
-    //     store.join('#perpetualmm')
-    //     store.join('#Bingchang')
-    //     store.join('#frokenok')
-    //     store.join('#vultus')
-    //     store.join('#neohart')
-    //     store.join('#zetsubera')
-    //     store.join('#procplays')
-    //     store.join('#lazerlong')
-    //     store.join('#testrunner')
-    //     store.join('#jiseed')
-    //     store.join('#xxxindyxxx')
-    //     store.join('#narcissawright')
-    //     store.join('#Goati_')
-    //     store.join('#TheLCC')
-    //     store.join('#azureseishin')
-    //     store.join('#pykn')
-    //     store.join('#jiggeh')
-    //     store.join('#chuboh')
-    //     store.join('#UFotekkie')
-    //     store.join('#Ty2358')
-    //     store.join('#sakegeist')
-    //     store.join('#klaige')
-    //     store.join('#Go1den')
-    //     store.join('#capnclever')
-    //     store.join('#omnigamer')
-    //     store.join('#sylux98')
-    //     store.join('#swordsmankirby')
-    //     store.join('#Macaw45')
-    //     store.join('#freddeh')
-    //     store.join('#ghou02')
-    //     store.join('#tterraj42')
-    //     store.join('#superKing13')
-    //     store.join('#CavemanDCJ')
-    //     store.join('#yagamoth')
-    //     store.join('#shadowJacky')
-    //     store.join('#Jenja23')
-    // }, 4000)
+// setTimeout(() => {
+//     store.join('#icarusFW')
+//     store.join('#Pasky')
+//     store.join('#Metako')
+//     store.join('#landail')
+//     store.join('#DarkSaber2k')
+//     store.join('#maurice_33')
+//     store.join('#Aquas')
+//     store.join('#Fiercekyo')
+//     store.join('#mulsqi')
+//     store.join('#bafael')
+//     store.join('#theboyks')
+//     store.join('#Raikou')
+//     store.join('#perpetualmm')
+//     store.join('#Bingchang')
+//     store.join('#frokenok')
+//     store.join('#vultus')
+//     store.join('#neohart')
+//     store.join('#zetsubera')
+//     store.join('#procplays')
+//     store.join('#lazerlong')
+//     store.join('#testrunner')
+//     store.join('#jiseed')
+//     store.join('#xxxindyxxx')
+//     store.join('#narcissawright')
+//     store.join('#Goati_')
+//     store.join('#TheLCC')
+//     store.join('#azureseishin')
+//     store.join('#pykn')
+//     store.join('#jiggeh')
+//     store.join('#chuboh')
+//     store.join('#UFotekkie')
+//     store.join('#Ty2358')
+//     store.join('#sakegeist')
+//     store.join('#klaige')
+//     store.join('#Go1den')
+//     store.join('#capnclever')
+//     store.join('#omnigamer')
+//     store.join('#sylux98')
+//     store.join('#swordsmankirby')
+//     store.join('#Macaw45')
+//     store.join('#freddeh')
+//     store.join('#ghou02')
+//     store.join('#tterraj42')
+//     store.join('#superKing13')
+//     store.join('#CavemanDCJ')
+//     store.join('#yagamoth')
+//     store.join('#shadowJacky')
+//     store.join('#Jenja23')
+// }, 4000)
 
-    await this.client.join(channel).then((data) => {
-      this.channels.set(channel, {
-        key: channel,
-        color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
-        joined: true,
-        autoJoin: true,
-      })
-      // Save to localStorage
-      LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
-      this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
-      // console.log(toJS(this.channels))
-      // console.log(toJS(this.joinedChannels))
-      return true
-    })
+await this.client.join(channel).then((data) => {
+  this.channels.set(channel, {
+    key: channel,
+    color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+    joined: true,
+    autoJoin: true,
+  })
+  // Save to localStorage
+  LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
+  this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
+  // console.log(toJS(this.channels))
+  // console.log(toJS(this.joinedChannels))
+  return true
+})
+
+let parseForEmotes = (message, channel) => {
+  let split_message = message.split(' ')
+  for (let i in split_message) {
+    const code = split_message[i]
+    if (twitch_emotes_map.has(code)) {
+      split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${twitch_emotes_map.get(code)} />`
+    }
+    if (bttv_emotes_map.has(code)) {
+      split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${bttv_emotes_map.get(code)} />`
+    }
+    if (ffz_emotes_map.has(channel)) {
+      // console.log(ffz_emotes_map)
+      if (ffz_emotes_map.get(channel).has(code)) {
+        split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
+      }
+    }
+    if (bttv_user_emotes_map.has(channel)) {
+      if (bttv_user_emotes_map.get(channel).has(code)) {
+        split_message[i] = <img style={{ verticalAlign: 'middle', padding: '1px' }} alt='emote' height={38} src={bttv_user_emotes_map.get(channel).get(code)} />
+      }
+    }
+  }
+  return ReactHtmlParser(split_message.join(' '));
+}

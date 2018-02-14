@@ -1,0 +1,11 @@
+.emote:hover .code {
+  display: block;
+  position: relative;
+  cursor: copy;
+  top: 30;
+  z-index: 999;
+}
+
+.code {
+  display: none;
+}

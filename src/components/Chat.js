@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import '../Chat.css'
 import moment from 'moment'
 import axios from 'axios'
 import { toJS } from 'mobx';
@@ -139,11 +140,12 @@ class Chat extends Component {
       }
     })
 
-    let m = (channel, userstate, message, time, key) => {
+    let addHtmlCSSToMessage = (channel, userstate, message, time, key) => {
       const k1 = `${channel}-${key}`
       const k2 = `${time}-${key}`
       const k3 = `${userstate['display-name']}-${key}`
       const k4 = `message-${key}`
+
       return <div style={{ marginLeft: '5px', padding: 0, }} key={k1}>
         <span style={{
           opacity: '0.8', fontSize: '10px', fontWeight: 'bold',
@@ -152,9 +154,43 @@ class Chat extends Component {
           {time} {channel}
         </span>
         <span style={{ color: `${userstate['color']}`, marginLeft: '2px', }} key={k3}>{userstate['display-name'] + ': '} </span>
-        <span style={{}} key={k4}>{this.parseForEmotes(message, removeHashtag(channel))}</span>
+        <span style={{}} key={k4}>{parseForEmotes(message, removeHashtag(channel))}</span>
       </div>
     }
+
+    let parseForEmotes = (message, channel) => {
+      let split_message = message.split(' ')
+      for (let i in split_message) {
+        const code = split_message[i]
+        if (twitch_emotes_map.has(code)) {
+          split_message[i] = `
+          <div class='emote' style='display: inline-block;'>
+          <span class='code'>${code}</span>
+          <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${twitch_emotes_map.get(code)} />
+          </div>
+          `
+        }
+        if (bttv_emotes_map.has(code)) {
+          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${bttv_emotes_map.get(code)} />`
+        }
+        if (ffz_emotes_map.has(channel)) {
+          // console.log(ffz_emotes_map)
+          if (ffz_emotes_map.get(channel).has(code)) {
+            split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
+          }
+        }
+        if (bttv_user_emotes_map.has(channel)) {
+          if (bttv_user_emotes_map.get(channel).has(code)) {
+            split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${bttv_user_emotes_map.get(channel).get(code)} />`
+          }
+        }
+      }
+
+      console.log(split_message)
+
+      return ReactHtmlParser(split_message.join(' '));
+    }
+
 
     let processMessage = (channel, message, key, opacity = 1) => {
       let color = blueGrey[900]
@@ -178,7 +214,7 @@ class Chat extends Component {
       // Step 1
       const key = store.msg_id
       store.msg_id = store.msg_id + 1
-      const msg = m(channel, userstate, message, time, key)
+      const msg = addHtmlCSSToMessage(channel, userstate, message, time, key)
       // Step 2
       const newMessage = processMessage(channel, msg, key)
       // Step 3
@@ -219,7 +255,7 @@ class Chat extends Component {
         const key = store.msg_id
         store.msg_id = store.msg_id + 1
 
-        const msg = m(channel, userstate, message, time)
+        const msg = addHtmlCSSToMessage(channel, userstate, message, time)
         const newMessage = processMessage(channel, msg, key, 0.75)
         store.messages.push(newMessage)
       }
@@ -232,6 +268,10 @@ class Chat extends Component {
     this.chatScroll.removeEventListener('scroll', this.handleChatScroll.bind(this))
   }
 
+  test() {
+    console.log('boo')
+  }
+
   truncateMessages() {
     const truncatedMessages = store.messages
     if (truncatedMessages.length > 750) {
@@ -241,31 +281,6 @@ class Chat extends Component {
     if (this.messageCache.length > 750) {
       this.messageCache = this.messageCache.splice(0, 350)
     }
-  }
-
-  parseForEmotes(message, channel) {
-    let split_message = message.split(' ')
-    for (let i in split_message) {
-      const code = split_message[i]
-      if (twitch_emotes_map.has(code)) {
-        split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${twitch_emotes_map.get(code)} />`
-      }
-      if (bttv_emotes_map.has(code)) {
-        split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${bttv_emotes_map.get(code)} />`
-      }
-      if (ffz_emotes_map.has(channel)) {
-        // console.log(ffz_emotes_map)
-        if (ffz_emotes_map.get(channel).has(code)) {
-          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
-        }
-      }
-      if (bttv_user_emotes_map.has(channel)) {
-        if (bttv_user_emotes_map.get(channel).has(code)) {
-          split_message[i] = `<img style='vertical-align: middle: padding: 1px;' height='38' src=${bttv_user_emotes_map.get(channel).get(code)} />`
-        }
-      }
-    }
-    return ReactHtmlParser(split_message.join(' '));
   }
 
   sendMessage(event) {
@@ -379,7 +394,7 @@ class Chat extends Component {
       <TextField
         placeholder=
         {store.joinedChannels[store.channelSelectValue] ? `${store.joinedChannels[store.channelSelectValue].key}` :
-        `Send a Message`
+          `Send a Message`
         }
         inputRef={(el) => { this.messageInput = el }}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
@@ -394,7 +409,7 @@ class Chat extends Component {
         {chatArea}
         <div style={{
           width: w, height: 60,
-          display: 'flex', 
+          display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap',
           alignSelf: 'auto',
