@@ -160,33 +160,39 @@ class Chat extends Component {
 
     let parseForEmotes = (message, channel) => {
       let split_message = message.split(' ')
+
+      let html = (emote, code) => {
+        return `
+        <div class='emote' style='display: inline-block; position: relative'>
+          <div class='code-box'>
+            <div class='enlarge-emote'><img height='100%' alt='emote' src=${emote} /></div>
+            <div class='code'>${code}</div>
+          </div>
+        <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${emote} />
+        </div>
+        `
+      }
+
       for (let i in split_message) {
         const code = split_message[i]
         if (twitch_emotes_map.has(code)) {
-          split_message[i] = `
-          <div class='emote' style='display: inline-block;'>
-          <span class='code'>${code}</span>
-          <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${twitch_emotes_map.get(code)} />
-          </div>
-          `
+          // Check accompanying css file for more information on the classes
+          split_message[i] = html(twitch_emotes_map.get(code), code)
         }
         if (bttv_emotes_map.has(code)) {
-          split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${bttv_emotes_map.get(code)} />`
+          split_message[i] = html(bttv_emotes_map.get(code), code)
         }
         if (ffz_emotes_map.has(channel)) {
-          // console.log(ffz_emotes_map)
           if (ffz_emotes_map.get(channel).has(code)) {
-            split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${ffz_emotes_map.get(channel).get(code)} />`
+            split_message[i] = html(ffz_emotes_map.get(channel).get(code), code)
           }
         }
         if (bttv_user_emotes_map.has(channel)) {
           if (bttv_user_emotes_map.get(channel).has(code)) {
-            split_message[i] = `<img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${bttv_user_emotes_map.get(channel).get(code)} />`
+            split_message[i] = html(bttv_user_emotes_map.get(channel).get(code), code)
           }
         }
       }
-
-      console.log(split_message)
 
       return ReactHtmlParser(split_message.join(' '));
     }
@@ -259,6 +265,8 @@ class Chat extends Component {
         const newMessage = processMessage(channel, msg, key, 0.75)
         store.messages.push(newMessage)
       }
+
+      this.forceUpdate()
     }
 
   }
