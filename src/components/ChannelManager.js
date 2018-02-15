@@ -18,11 +18,8 @@ class ChannelManager extends Component {
       () => {
         if (store.oAuth) {
           store.updateStreamers().then((streams) => {
-            // console.log('streams', streams)
-            // console.log('channels', toJS(store.channels))
             const channels = toJS(store.channels.entries())
-            console.log(channels)
-            console.log(streams)
+
             for (const [key, value] of channels) {
               const joined = toJS(value).joined
               let stay = true
@@ -77,7 +74,8 @@ class ChannelManager extends Component {
         }
 
         const button = joined ?
-          <HighlightOff style={{ cursor: 'pointer', color: 'red', }} onClick={() => store.leave(name)} /> :
+          //Set Autojoin to false if user leaves voluntarily (clicking leave button)
+          <HighlightOff style={{ cursor: 'pointer', color: 'red', }} onClick={() => store.leave(name, false)} /> :
           <AddCircleOutline style={{ cursor: 'pointer', color: store.theme.palette.text.primary }} onClick={() => store.join(name)} />
 
         channels.push(

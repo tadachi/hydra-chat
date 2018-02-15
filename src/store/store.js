@@ -102,7 +102,7 @@ class Store {
   }
   @observable channels = new Map()
   widthBreakPoint = 530
-  mobileScreenSize = false
+  @observable mobileScreenSize = false
 
   // Chat
   @observable channelSelectValue = 0
@@ -289,7 +289,7 @@ class Store {
    * @param {any} channel 
    * @memberof Store
    */
-  @action async leave(channel) {
+  @action async leave(channel, autoJoin = true) {
     channel = clean(channel)
     try {
       if (this.channels.get(channel)) {
@@ -300,7 +300,7 @@ class Store {
             key: channel,
             joined: false,
             // color: color,
-            autoJoin: false,
+            autoJoin: autoJoin,
           })
           // Save to localStorage
           LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
@@ -328,7 +328,7 @@ class Store {
   @action updateDimensions(w, h) {
     this.width = w
     this.height = h + 10 //Covers missing pixels at the bottom of the window
-    this.mobileScreensize = (this.width < this.widthBreakPoint) ? true : false
+    this.mobileScreenSize = this.width < this.widthBreakPoint ? true : false
   }
 
   /**

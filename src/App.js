@@ -11,6 +11,7 @@ import { MuiThemeProvider } from 'material-ui/styles';
 import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
+import Refresh from 'material-ui-icons/Refresh'
 import IconButton from 'material-ui/IconButton'
 
 //Components
@@ -143,6 +144,7 @@ class MainLayout extends Component {
                   flexWrap: 'nowrap', justifyContent: 'space-evenly'
                 }}>
                   <div style={{ display: 'inline-block' }}><UserLogo style={{ width: '50px', }} name={store.userName} img={store.userLogo} /></div>
+                  <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.updateStreamers()}><Refresh style={{ width: '100%' }} /></IconButton></div>
                   <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.handleDrawerOpen()}><LeftArrow style={{ width: '100%' }} /></IconButton></div>
                 </div> : null}
 
@@ -159,6 +161,7 @@ class MainLayout extends Component {
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
                   <div>channelSelectValue: {store.channelSelectValue}</div>
                   <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
+                  <div>widthBreakPoint: {String(store.widthBreakPoint)}</div>
                   <div><Button href={store.makeDeleteTokenURL()}>Logout</Button></div>
                 </div>
                 : null}

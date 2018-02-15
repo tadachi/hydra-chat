@@ -2,7 +2,7 @@
   display: flex;
   position: absolute;
   cursor: copy;
-  top: -145px;
+  top: -130px;
   left: -45px;
   bottom: 0;
 }
@@ -12,21 +12,25 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 135px;
-  height: 135px;
-  opacity: .95;
-  background-color: white;
+  width: 120px;
+  height: 120px;
+  opacity: .85;
+  background-color: black;
   display: none;
   color: black;
   border: 2px black solid;
 }
 
+.emote-origin {
+  display: inline
+}
+
 .enlarge-emote {
-  height: 75%;
-  border-bottom: 3px black solid;
+  height: 50%;
 }
 
 .code {
-  font-size: 20px;
-  font-weight: 'bold'
+  font-size: 16px;
+  font-weight: 'bold';
+  color: white;
 }

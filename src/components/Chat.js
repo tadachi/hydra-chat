@@ -159,14 +159,30 @@ class Chat extends Component {
     }
 
     let parseForEmotes = (message, channel) => {
+      const TWITCH = 'twitch'
+      const BTTV = 'bttv'
+      const FRANKERFACEZ = 'FrankerFaceZ'
+
       let split_message = message.split(' ')
 
-      let html = (emote, code) => {
+      let html = (code, emote, origin = 'twitch') => {
+        let emoteOrigin = twitch_emotes_map.get('Kappa')
+        switch (origin) {
+          case 'bttv':
+            emoteOrigin = bttv_emotes_map.get('bttvWink')
+            break
+          case 'frankerFaceZ':
+            emoteOrigin = twitch_emotes_map.get('FrankerZ')
+            break
+          default:
+            emoteOrigin = twitch_emotes_map.get('Kappa')
+        }
+
         return `
         <div class='emote' style='display: inline-block; position: relative'>
           <div class='code-box'>
             <div class='enlarge-emote'><img height='100%' alt='emote' src=${emote} /></div>
-            <div class='code'>${code}</div>
+            <div class='code'><img alt='emoteOrigin' height='16' src=${emoteOrigin} />${code}</div>
           </div>
         <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${emote} />
         </div>
@@ -177,19 +193,19 @@ class Chat extends Component {
         const code = split_message[i]
         if (twitch_emotes_map.has(code)) {
           // Check accompanying css file for more information on the classes
-          split_message[i] = html(twitch_emotes_map.get(code), code)
+          split_message[i] = html(code, twitch_emotes_map.get(code), TWITCH)
         }
         if (bttv_emotes_map.has(code)) {
-          split_message[i] = html(bttv_emotes_map.get(code), code)
+          split_message[i] = html(code, bttv_emotes_map.get(code), BTTV)
         }
         if (ffz_emotes_map.has(channel)) {
           if (ffz_emotes_map.get(channel).has(code)) {
-            split_message[i] = html(ffz_emotes_map.get(channel).get(code), code)
+            split_message[i] = html(code, ffz_emotes_map.get(channel).get(code), FRANKERFACEZ)
           }
         }
         if (bttv_user_emotes_map.has(channel)) {
           if (bttv_user_emotes_map.get(channel).has(code)) {
-            split_message[i] = html(bttv_user_emotes_map.get(channel).get(code), code)
+            split_message[i] = html(code, bttv_user_emotes_map.get(channel).get(code), BTTV)
           }
         }
       }

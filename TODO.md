@@ -9,15 +9,15 @@
 
 * Figure how to proceed after Chrome distrusts Symantec certificates completely
 
-* Fix mobile/desktop dimensions
+* ~~Fix mobile/desktop dimensions~~ (**Completed**)
 
 ### Low Priority
-* OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)
+* ~~OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)~~ (**Completed**)
 
 * Color picker
     * Show on ChannelManager channel cards onClick event
 
-* Show all message as black Command
+* Show all message as black command
     * Place in ChatMenu modal
 
 * Emote picker that shows only emotes used in the past as to not overload the user
