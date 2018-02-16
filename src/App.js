@@ -162,6 +162,7 @@ class MainLayout extends Component {
                   <div>channelSelectValue: {store.channelSelectValue}</div>
                   <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
                   <div>widthBreakPoint: {String(store.widthBreakPoint)}</div>
+                  <div>blackMessages: {String(store.blackMessages)}</div>
                   <div><Button href={store.makeDeleteTokenURL()}>Logout</Button></div>
                 </div>
                 : null}

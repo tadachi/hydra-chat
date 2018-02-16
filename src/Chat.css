@@ -1,3 +1,7 @@
+.emote {
+  display: inline-block;
+  position: relative;
+}
 .emote:hover .code-box {
   display: flex;
   position: absolute;
@@ -13,6 +17,7 @@
   align-items: center;
   justify-content: center;
   width: 120px;
+  max-width: 175px;
   height: 120px;
   opacity: .85;
   background-color: black;
@@ -22,14 +27,17 @@
 }
 
 .emote-origin {
-  display: inline
+  display: inline;
+  margin-right: 2px;
 }
 
 .enlarge-emote {
   height: 50%;
+  margin-bottom: 5px;
 }
 
 .code {
+  display: inline;
   font-size: 16px;
   font-weight: 'bold';
   color: white;

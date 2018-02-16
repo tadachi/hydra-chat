@@ -179,10 +179,13 @@ class Chat extends Component {
         }
 
         return `
-        <div class='emote' style='display: inline-block; position: relative'>
+        <div class='emote'>
           <div class='code-box'>
             <div class='enlarge-emote'><img height='100%' alt='emote' src=${emote} /></div>
-            <div class='code'><img alt='emoteOrigin' height='16' src=${emoteOrigin} />${code}</div>
+            <div>
+              <div class='emote-origin'><img alt='emoteOrigin' height='16' src=${emoteOrigin} /></div>
+              <div class='code'>${code}</div>
+            </div>
           </div>
         <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${emote} />
         </div>
@@ -213,7 +216,6 @@ class Chat extends Component {
       return ReactHtmlParser(split_message.join(' '));
     }
 
-
     let processMessage = (channel, message, key, opacity = 1) => {
       let color = blueGrey[900]
 
@@ -221,7 +223,10 @@ class Chat extends Component {
         color = store.channels.get(channel).color :
         color = blueGrey[900]
 
-      const msg = <div style={{ backgroundColor: color, opacity: opacity }} channel={channel} key={key}>
+      const originalBackgroundColor = { backgroundColor: color }
+      const newBackgroundColor = store.blackMessages ? { backgroundColor: null } : null
+
+      const msg = <div style={{ ...originalBackgroundColor, opacity: opacity, ...newBackgroundColor }} channel={channel} key={key}>
         {message}
       </div>
 

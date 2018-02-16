@@ -13,6 +13,8 @@ import Dialog, {
 import Settings from 'material-ui-icons/Settings'
 import Delete from 'material-ui-icons/Delete';
 import IconButton from 'material-ui/IconButton'
+import Checkbox from 'material-ui/Checkbox';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 
 @observer
 class ChatMenu extends React.Component {
@@ -32,6 +34,9 @@ class ChatMenu extends React.Component {
     // LOCAL_STORAGE.removeItem(MESSAGES)
   }
 
+  updateAllBlackMessages() {
+    store.blackMessages = !store.blackMessages
+  }
 
   componentDidMount() { }
 
@@ -46,8 +51,7 @@ class ChatMenu extends React.Component {
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Settings</DialogTitle>
-          <DialogContent>
-            {/* <DialogContentText>
+          {/* <DialogContentText>
               To subscribe to this website, please enter your email address here. We will send
               updates occationally.
             </DialogContentText>
@@ -59,10 +63,24 @@ class ChatMenu extends React.Component {
               type="email"
               fullWidth
             /> */}
-            <Button variant='raised' color={'primary'} onClick={this.clearChat.bind(this)}>
-              Clear My Chat
-              <Delete />
-            </Button>
+
+          <DialogContent>
+            <List>
+              <ListItem key={0} dense button>
+                <Button variant='raised' color={'primary'} onClick={this.clearChat.bind(this)}>
+                  Clear My Chat
+                  <Delete />
+                </Button>
+              </ListItem>
+              <ListItem key={0} dense button>
+                <ListItemText primary={'Set future messages to be dark:'} />
+                <Checkbox
+                  checked={store.blackMessages}
+                  tabIndex={-1}
+                  onChange={this.updateAllBlackMessages.bind(this)}
+                />
+              </ListItem>
+            </List>
           </DialogContent>
           {/* <DialogContent>
             <Button raised onClick={this.test.bind(this)}>

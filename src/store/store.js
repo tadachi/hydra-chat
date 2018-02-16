@@ -111,6 +111,7 @@ class Store {
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
   @observable messages = []
+  @observable blackMessages = false
 
   // Login
   @observable twitchLoginUrl = `https://api.twitch.tv/kraken/oauth2/authorize
@@ -349,8 +350,6 @@ class Store {
   @action handleDrawerOpen() {
     this.drawerOpen = !this.drawerOpen
   }
-
-
 
 }
 
