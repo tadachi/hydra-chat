@@ -63,8 +63,6 @@ let deleteToken = async function (token) {
 
 window.deleteToken = deleteToken
 
-
-
 class Store {
   // App
   developmentMode = debug

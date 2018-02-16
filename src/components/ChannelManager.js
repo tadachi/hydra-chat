@@ -75,8 +75,8 @@ class ChannelManager extends Component {
 
         const button = joined ?
           //Set Autojoin to false if user leaves voluntarily (clicking leave button)
-          <HighlightOff style={{ cursor: 'pointer', color: 'red', }} onClick={() => store.leave(name, false)} /> :
-          <AddCircleOutline style={{ cursor: 'pointer', color: store.theme.palette.text.primary }} onClick={() => store.join(name)} />
+          <HighlightOff style={{ cursor: 'pointer', color: 'red', }} onClick={() => store.leave(name, false).then(this.forceUpdate())} /> :
+          <AddCircleOutline style={{ cursor: 'pointer', color: store.theme.palette.text.primary }} onClick={() => store.join(name).then(this.forceUpdate())} />
 
         channels.push(
           <div style={{ ...ChannelManagerCSS.item, backgroundColor: color }} key={k}>

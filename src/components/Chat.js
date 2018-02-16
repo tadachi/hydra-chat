@@ -144,8 +144,11 @@ class Chat extends Component {
       const k1 = `${channel}-${key}`
       const k2 = `${time}-${key}`
       const k3 = `${userstate['display-name']}-${key}`
-      const k4 = `message-${key}`
+      const k4 = `badges-${key}`
+      const k5 = `message-${key}`
 
+      console.log(userstate)
+      const badges = userstate['badges'] // premium, broadcaster, subscriber, moderator, partner
       return <div style={{ marginLeft: '5px', padding: 0, }} key={k1}>
         <span style={{
           opacity: '0.8', fontSize: '10px', fontWeight: 'bold',
@@ -154,7 +157,10 @@ class Chat extends Component {
           {time} {channel}
         </span>
         <span style={{ color: `${userstate['color']}`, marginLeft: '2px', }} key={k3}>{userstate['display-name'] + ': '} </span>
-        <span style={{}} key={k4}>{parseForEmotes(message, removeHashtag(channel))}</span>
+        <span key={k4}>
+          {/* {badges['broadcaster'] === 1 ? <img height='10' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/broadcaster.png' /> : null } */}
+        </span>
+        <span style={{}} key={k5}>{parseForEmotes(message, removeHashtag(channel))}</span>
       </div>
     }
 
@@ -437,7 +443,7 @@ class Chat extends Component {
       <div style={{ height: store.height }}>
         {chatArea}
         <div style={{
-          width: w, height: 60,
+          width: w, height: 60, minHeight: 60, maxHeight: 60,
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap',
@@ -445,11 +451,11 @@ class Chat extends Component {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-          <div style={{ margin: 'auto', }}>{drawerControl}</div>
+          <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
           <div style={{ margin: 'auto', }}><ChatMenu /></div>
           <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
-          <div style={{ margin: 'auto', }}>{scrollBottomButton}</div>
+          <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
         </div>
       </div>
     )
