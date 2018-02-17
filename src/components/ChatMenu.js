@@ -16,6 +16,9 @@ import IconButton from 'material-ui/IconButton'
 import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
+// Utility
+import { LOCAL_STORAGE, MESSAGES, } from '../utility/localStorageWrapper'
+
 @observer
 class ChatMenu extends React.Component {
 
@@ -31,7 +34,7 @@ class ChatMenu extends React.Component {
     store.messages = []
     store.msg_id = 0
     // Remove past saved twitch chat messages on clear
-    // LOCAL_STORAGE.removeItem(MESSAGES)
+    LOCAL_STORAGE.removeItem(MESSAGES)
   }
 
   updateAllBlackMessages() {

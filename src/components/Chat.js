@@ -22,6 +22,7 @@ import ArrowDownward from 'material-ui-icons/ArrowDownward'
 import ChatMenu from './ChatMenu'
 
 // Utility
+import uuidv1 from 'uuid/v1'
 import twitch_emotes from '../emotes/twitch_emotes'
 import bttv_emotes from '../emotes/bttv_emotes'
 import { LOCAL_STORAGE, MESSAGES, } from '../utility/localStorageWrapper'
@@ -141,26 +142,36 @@ class Chat extends Component {
     })
 
     let addHtmlCSSToMessage = (channel, userstate, message, time, key) => {
-      const k1 = `${channel}-${key}`
-      const k2 = `${time}-${key}`
-      const k3 = `${userstate['display-name']}-${key}`
-      const k4 = `badges-${key}`
-      const k5 = `message-${key}`
-
-      console.log(userstate)
       const badges = userstate['badges'] // premium, broadcaster, subscriber, moderator, partner
-      return <div style={{ marginLeft: '5px', padding: 0, }} key={k1}>
+
+      let badgesArray = []
+      let badgeID = 0
+      for (const badge in badges) {
+        switch (badge) {
+          case 'broadcaster':
+            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/broadcaster.png' key={uuidv1()}/>)
+            break
+          case 'moderator':
+            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/mod.png' key={uuidv1()}/>)
+            break
+          default:
+            break
+        }
+        badgeID += 1
+      }
+
+      return <div style={{ marginLeft: '5px', padding: 0, }} key={uuidv1()}>
         <span style={{
           opacity: '0.8', fontSize: '10px', fontWeight: 'bold',
           overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
-        }} key={k2}>
+        }} key={uuidv1()}>
           {time} {channel}
         </span>
-        <span style={{ color: `${userstate['color']}`, marginLeft: '2px', }} key={k3}>{userstate['display-name'] + ': '} </span>
-        <span key={k4}>
-          {/* {badges['broadcaster'] === 1 ? <img height='10' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/broadcaster.png' /> : null } */}
+        <span style={{ color: `${userstate['color']}`, marginLeft: '2px', }} key={uuidv1()}>
+          {badgesArray}
+          {userstate['display-name'] + ': '}
         </span>
-        <span style={{}} key={k5}>{parseForEmotes(message, removeHashtag(channel))}</span>
+        <span style={{}} key={uuidv1()}>{parseForEmotes(message, removeHashtag(channel))}</span>
       </div>
     }
 
@@ -174,10 +185,10 @@ class Chat extends Component {
       let html = (code, emote, origin = 'twitch') => {
         let emoteOrigin = twitch_emotes_map.get('Kappa')
         switch (origin) {
-          case 'bttv':
+          case BTTV:
             emoteOrigin = bttv_emotes_map.get('bttvWink')
             break
-          case 'frankerFaceZ':
+          case FRANKERFACEZ:
             emoteOrigin = twitch_emotes_map.get('FrankerZ')
             break
           default:
