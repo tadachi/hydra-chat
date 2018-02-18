@@ -14,35 +14,36 @@ import HighlightOff from 'material-ui-icons/HighlightOff'
 class ChannelManager extends Component {
 
   componentDidMount() {
-    this.updateStreamersTimerID = setInterval(
-      () => {
-        if (store.oAuth) {
-          store.updateStreamers().then((streams) => {
-            const channels = toJS(store.channels.entries())
+    this.updateStreamersTimerID = setInterval(() => {
+      if (store.oAuth) {
+        store.updateStreamers().then((streams) => {
+          const channels = toJS(store.channels.entries())
+          console.log(streams)
+          console.log(channels)
+          for (const [key, value] of channels) {
+            const joined = toJS(value).joined
+            let stay = true
 
-            for (const [key, value] of channels) {
-              const joined = toJS(value).joined
-              let stay = true
-
-              for (const [stream, value] of streams) {
-                if (key === stream) {
-                  stay = true
-                  break
-                  // Everything is good
-                } else {
-                  stay = false
-                }
-              }
-              if (stay === false && joined === true) {
-                store.leave(key).then(() => {
-                  this.forceUpdate()
-                  console.log(key, stay, toJS(store.channels.get(key)))
-                })
+            for (const [stream, value] of streams) {
+              if (key === stream) {
+                stay = true
+                break
+                // Everything is good
+              } else {
+                stay = false
               }
             }
-          })
-        }
-      },
+
+            if (stay === false && joined === true) {
+              store.leave(key).then(() => {
+                this.forceUpdate()
+                console.log(key, stay, toJS(store.channels.get(key)))
+              })
+            }
+          }
+        })
+      }
+    },
       120000 // 2 minutes or 120 seconds
     )
   }

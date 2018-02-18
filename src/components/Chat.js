@@ -141,23 +141,22 @@ class Chat extends Component {
       }
     })
 
-    let addHtmlCSSToMessage = (channel, userstate, message, time, key) => {
+    let addHtmlCSSToMessage = (channel, userstate, message, time) => {
       const badges = userstate['badges'] // premium, broadcaster, subscriber, moderator, partner
 
       let badgesArray = []
-      let badgeID = 0
+
       for (const badge in badges) {
         switch (badge) {
           case 'broadcaster':
-            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/broadcaster.png' key={uuidv1()}/>)
+            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/broadcaster.png' key={uuidv1()} />)
             break
           case 'moderator':
-            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/mod.png' key={uuidv1()}/>)
+            badgesArray.push(<img height='12' alt='broadcaster' src='https://static-cdn.jtvnw.net/chat-badges/mod.png' key={uuidv1()} />)
             break
           default:
             break
         }
-        badgeID += 1
       }
 
       return <div style={{ marginLeft: '5px', padding: 0, }} key={uuidv1()}>
@@ -258,7 +257,7 @@ class Chat extends Component {
       // Step 1
       const key = store.msg_id
       store.msg_id = store.msg_id + 1
-      const msg = addHtmlCSSToMessage(channel, userstate, message, time, key)
+      const msg = addHtmlCSSToMessage(channel, userstate, message, time)
       // Step 2
       const newMessage = processMessage(channel, msg, key)
       // Step 3
@@ -274,6 +273,7 @@ class Chat extends Component {
     this.truncateTimerID = setInterval(
       () => {
         this.truncateMessages()
+        console.log('Messages truncated.')
       },
       120000
     )
@@ -282,6 +282,7 @@ class Chat extends Component {
       () => {
         if (this.messageCache.length > 0) {
           LOCAL_STORAGE.setItem(MESSAGES, arrayToJson(this.messageCache))
+          console.log('Messages saved to localStorage.')
         }
       },
       10000 // 10 seconds
@@ -304,7 +305,11 @@ class Chat extends Component {
         store.messages.push(newMessage)
       }
 
-      this.forceUpdate()
+      this.forceUpdate(()=> {
+        this.scrollToBottom()
+      })
+
+
     }
 
   }
@@ -312,10 +317,6 @@ class Chat extends Component {
   componentWillUnmount() {
     // Clear listeners and intervals
     this.chatScroll.removeEventListener('scroll', this.handleChatScroll.bind(this))
-  }
-
-  test() {
-    console.log('boo')
   }
 
   truncateMessages() {
@@ -372,7 +373,6 @@ class Chat extends Component {
     const chat = document.getElementById('chat');
     store.scrollToEnd = true
     chat.scrollTop = chat.scrollHeight;
-    // this.messagesEnd.scrollIntoView({ behavior: "instant" })
   }
 
   switchChannel(event) {

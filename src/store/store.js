@@ -106,7 +106,7 @@ class Store {
   @observable channelSelectValue = 0
   @observable joinedChannels = []
   @observable msg_id = 0
-  @observable scrollToEnd = true
+  @observable scrollToEnd = false
   @observable chatMenuOpen = false
   @observable messages = []
   @observable blackMessages = false

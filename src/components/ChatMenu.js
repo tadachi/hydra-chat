@@ -7,7 +7,6 @@ import Button from 'material-ui/Button';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
 } from 'material-ui/Dialog'
 import Settings from 'material-ui-icons/Settings'
@@ -75,7 +74,7 @@ class ChatMenu extends React.Component {
                   <Delete />
                 </Button>
               </ListItem>
-              <ListItem key={0} dense button>
+              <ListItem key={1} dense button>
                 <ListItemText primary={'Set future messages to be dark:'} />
                 <Checkbox
                   checked={store.blackMessages}

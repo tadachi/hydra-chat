@@ -1,6 +1,8 @@
 # List of TODOS
 
 ### High Priority
+* Move client-id out of store.js into it's own file that is not commited into git
+
 * Migrate to new Twitch API during/after 2018
 
 * Register moderator commands so spam can be deleted, etc.
@@ -9,7 +11,11 @@
 
 * Figure how to proceed after Chrome distrusts Symantec certificates completely
 
-* ~~Fix mobile/desktop dimensions~~ (**Completed**)
+* ~~Fix mobile/desktop dimensions~~ (**On-Going**)
+
+* Save the access token and permissions in LocalStorage
+
+* Remove queryString from the URL so to not alarm the User
 
 ### Low Priority
 * ~~OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)~~ (**Completed**)
@@ -30,10 +36,6 @@
 * Catch all app stopping errors 
 
 * Register urls in chat so you can click and visit them
-
-* Save the access token and permissions in LocalStorage
-
-* remove queryString from the URL so to not alarm the User
 
 * Change favicon to an inactive version when there are no channels joined
 

@@ -1,6 +1,4 @@
 import React from 'react'
-// Material-ui
-import Paper from 'material-ui/Paper';
 
 class UserLogo extends React.Component {
 

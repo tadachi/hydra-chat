@@ -156,6 +156,7 @@ class MainLayout extends Component {
                   <div>{store.userName}</div>
                   <div>System Theme: {store.systemTheme}</div>
                   <div># of Messages: {store.msg_id}</div>
+                  <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
