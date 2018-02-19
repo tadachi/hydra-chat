@@ -24,16 +24,12 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "NODE_ENV=development react-scripts start",
-    "build": "NODE_ENV=production react-scripts build",
+    "start": "cross-env NODE_ENV=development react-scripts start",
+    "build": "cross-env NODE_ENV=production react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
     "gh-pages": "^1.1.0"
-  },
-  "config": {
-    "TwitchDevelopmentClientID": "gpa5zi9y5d70q9b2lcpcwvikp7mek0",
-    "TwitchProductionClientID": "yc5s3u4bv8en92xxii4vf3xkwanlyb"
   }
 }
