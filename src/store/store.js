@@ -12,23 +12,14 @@ import _ from 'lodash'
 import { createMuiTheme } from 'material-ui/styles'
 
 // Utility
-import { LOCAL_STORAGE, CHANNELS } from '../utility/localStorageWrapper'
+import CONFIG from '../config'
+import { LOCAL_STORAGE, CHANNELS, OAUTH } from '../utility/localStorageWrapper'
 import { mapToJson } from '../utility/JsonMapUtil'
 
-// Package.json
-// import packageJson from '../../package.json'
-
-// Production
-// const client_id = 'yc5s3u4bv8en92xxii4vf3xkwanlyb'
-// const redirect_uri = 'https://tadachi.github.com/hydra-chat'
-// const secure = true
-// const debug = false
-
-// Development
-const client_id = 'gpa5zi9y5d70q9b2lcpcwvikp7mek0'
-const redirect_uri = 'http://localhost:3000/'
-const secure = false
-const debug = true
+const client_id = CONFIG.client_id
+const redirect_uri = CONFIG.redirect_uri
+const secure = CONFIG.secure
+const debug = CONFIG.debug
 
 const max_length = web_safe_colors.length - 1 // off by one
 
@@ -110,6 +101,7 @@ class Store {
   @observable chatMenuOpen = false
   @observable messages = []
   @observable blackMessages = false
+  colorInt = 0
 
   // Login
   @observable twitchLoginUrl = `https://api.twitch.tv/kraken/oauth2/authorize
@@ -134,6 +126,7 @@ class Store {
    */
   @action setAccessToken(oAuth) {
     this.oAuth = oAuth
+    LOCAL_STORAGE.setItem(OAUTH, oAuth)
   }
 
   /**
@@ -246,7 +239,7 @@ class Store {
         const result = await this.client.join(channel).then((data) => {
           this.channels.set(channel, {
             key: channel,
-            color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+            color: web_safe_colors[this.handleColorIncrement()],
             joined: true,
             autoJoin: true,
           })
@@ -276,7 +269,7 @@ class Store {
   @action addChannel(channel) {
     this.channels.set(channel, {
       key: channel,
-      color: web_safe_colors[randomIntFromInterval(0, max_length - 1)],
+      color: web_safe_colors[this.handleColorIncrement()],
       joined: false
     })
     LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
@@ -351,11 +344,26 @@ class Store {
     this.drawerOpen = !this.drawerOpen
   }
 
+  /**
+   * Increment colorInt and make sure it doesn't go over max_length
+   * 
+   * @returns 
+   * @memberof Store
+   */
+  @action handleColorIncrement() {
+    const lastColorInt = this.colorInt
+    this.colorInt += 1
+    if (this.colorInt >= max_length) {
+      this.colorInt = 0
+    }
+    return lastColorInt
+  }
+
 }
 
-function randomIntFromInterval(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
+// function randomIntFromInterval(min, max) {
+//   return Math.floor(Math.random() * (max - min + 1) + min);
+// }
 
 let store = window.store = new Store()
 

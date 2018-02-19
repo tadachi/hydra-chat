@@ -12,6 +12,11 @@ export const getParams = query => {
     }, {});
 }
 
+export function removeParams() {
+  let clean_uri = window.location.protocol + "//" + window.location.host + window.location.pathname;
+  window.history.replaceState({}, document.title, clean_uri);
+}
+
 /**
  * Replaces string spaces with underscore and lowercases it
  * 

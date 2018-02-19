@@ -21,9 +21,10 @@ import UserLogo from './components/UserLogo'
 import Chat from './components/Chat'
 
 //Utility
-import { getParams, getBaseUrl } from './utility/utility'
+import { getParams, removeParams, getBaseUrl } from './utility/utility'
 import { jsonToMap } from './utility/JsonMapUtil'
 import { LOCAL_STORAGE, CHANNELS } from './utility/localStorageWrapper'
+import CONFIG from './config'
 
 let Main = null
 let ChatComponent = null
@@ -37,6 +38,11 @@ class App extends Component {
     document.body.style.backgroundColor = store.theme.palette.background.default
 
     const oAuth = getParams(document.location.hash)['access_token']
+
+    if (CONFIG.env === 'production') {
+      removeParams()
+    }
+
     if (oAuth) {
       store.setAccessToken(oAuth)
       store.setUserObject().then((response) => {
@@ -71,9 +77,7 @@ class App extends Component {
             }
 
             this.forceUpdate()
-
           })
-
         })
       })
     }
@@ -158,6 +162,7 @@ class MainLayout extends Component {
                   <div># of Messages: {store.msg_id}</div>
                   <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
+                  <div>colorInt: {store.colorInt}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
                   <div>channelSelectValue: {store.channelSelectValue}</div>

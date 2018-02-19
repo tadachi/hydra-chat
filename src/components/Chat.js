@@ -273,7 +273,6 @@ class Chat extends Component {
     this.truncateTimerID = setInterval(
       () => {
         this.truncateMessages()
-        console.log('Messages truncated.')
       },
       120000
     )
@@ -282,7 +281,6 @@ class Chat extends Component {
       () => {
         if (this.messageCache.length > 0) {
           LOCAL_STORAGE.setItem(MESSAGES, arrayToJson(this.messageCache))
-          console.log('Messages saved to localStorage.')
         }
       },
       10000 // 10 seconds
@@ -462,11 +460,11 @@ class Chat extends Component {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-          <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
-          <div style={{ margin: 'auto', }}><ChatMenu /></div>
-          <div style={{ flexGrow: 2, margin: 'auto', minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
+          <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
+          <div style={{}}><ChatMenu /></div>
+          <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
-          <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
+          <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
         </div>
       </div>
     )

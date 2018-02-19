@@ -18,8 +18,6 @@ class ChannelManager extends Component {
       if (store.oAuth) {
         store.updateStreamers().then((streams) => {
           const channels = toJS(store.channels.entries())
-          console.log(streams)
-          console.log(channels)
           for (const [key, value] of channels) {
             const joined = toJS(value).joined
             let stay = true
@@ -37,7 +35,7 @@ class ChannelManager extends Component {
             if (stay === false && joined === true) {
               store.leave(key).then(() => {
                 this.forceUpdate()
-                console.log(key, stay, toJS(store.channels.get(key)))
+                // console.log(key, stay, toJS(store.channels.get(key)))
               })
             }
           }
