@@ -1,21 +1,21 @@
 # List of TODOS
 
 ### High Priority
-* Move client-id out of store.js into it's own file that is not commited into git
+* ~~Move client-id out of store.js into it's own file that is not commited into git~~ (**Completed**)
 
 * Migrate to new Twitch API during/after 2018
 
-* Register moderator commands so spam can be deleted, etc.
+* Register moderator commands so spam can be deleted, etc
 
 * Support subscriber emotes
 
 * Figure how to proceed after Chrome distrusts Symantec certificates completely
 
-* ~~Fix mobile/desktop dimensions~~ (**On-Going**)
+* ~~Fix mobile/desktop dimensions~~ (**On-going**)
 
-* Save the access token and permissions in LocalStorage
+* ~~Save the access token and permissions in LocalStorage~~ (**Completed**)
 
-* Remove queryString from the URL so to not alarm the User
+* ~~Remove queryString from the URL so to not alarm the User~~ (**Completed**)
 
 ### Low Priority
 * ~~OnHover of a message's emote, show the emote large, its origin (twitch, BTTV, FFZ) and its code (PogChamp)~~ (**Completed**)
@@ -29,9 +29,9 @@
 * Emote picker that shows only emotes used in the past as to not overload the user
     * Place within Chat's chat textarea on far right corner just like in Twitch's chat
   
-* Add autojoin to recently joined channels
-    * This list of recently joined channels are acquired by joining a channel first. They are not added immediately
-    * These channels are stored in LocalStorage
+* ~~Add autojoin to recently joined channels~~ (**Completed**)
+    * ~~This list of recently joined channels are acquired by joining a channel first They are not added immediately~~ (**Completed**)
+    * ~~These channels are stored in LocalStorage~~ (**Completed**)
 
 * Catch all app stopping errors 
 

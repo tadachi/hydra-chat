@@ -145,7 +145,7 @@ class MainLayout extends Component {
                   top: 0,
                   height: 60,
                   display: 'flex', flexDirection: 'row',
-                  flexWrap: 'nowrap', justifyContent: 'space-evenly'
+                  flexWrap: 'nowrap', justifyContent: 'center'
                 }}>
                   <div style={{ display: 'inline-block' }}><UserLogo style={{ width: '50px', }} name={store.userName} img={store.userLogo} /></div>
                   <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.updateStreamers()}><Refresh style={{ width: '100%' }} /></IconButton></div>
