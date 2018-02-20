@@ -303,7 +303,7 @@ class Chat extends Component {
         store.messages.push(newMessage)
       }
 
-      this.forceUpdate(()=> {
+      this.forceUpdate(() => {
         this.scrollToBottom()
       })
 

@@ -23,7 +23,7 @@
 * Color picker
     * Show on ChannelManager channel cards onClick event
 
-* Show all message as black command
+* Show all messages as black command
     * Place in ChatMenu modal
 
 * Emote picker that shows only emotes used in the past as to not overload the user

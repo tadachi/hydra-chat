@@ -114,7 +114,7 @@ class Store {
 
   makeDeleteTokenURL(token) {
     const url = `https://api.twitch.tv/kraken/oauth2/revoke?client_id=${client_id}&token=${this.oAuth}`
-    
+
     return url
   }
 
