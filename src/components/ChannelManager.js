@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // Mobx
 import { observer, } from 'mobx-react'
-import { toJS, } from 'mobx';
+
 import store from '../store/store';
 
 // Material-ui
@@ -14,40 +14,9 @@ import HighlightOff from 'material-ui-icons/HighlightOff'
 class ChannelManager extends Component {
 
   componentDidMount() {
-    this.updateStreamersTimerID = setInterval(() => {
-      if (store.oAuth) {
-        store.updateStreamers().then((streams) => {
-          const channels = toJS(store.channels.entries())
-          for (const [key, value] of channels) {
-            const joined = toJS(value).joined
-            let stay = true
-
-            for (const [stream, value] of streams) {
-              if (key === stream) {
-                stay = true
-                break
-                // Everything is good
-              } else {
-                stay = false
-              }
-            }
-
-            if (stay === false && joined === true) {
-              store.leave(key).then(() => {
-                this.forceUpdate()
-                // console.log(key, stay, toJS(store.channels.get(key)))
-              })
-            }
-          }
-        })
-      }
-    },
-      120000 // 2 minutes or 120 seconds
-    )
   }
 
   componentWillUnmount() {
-    clearInterval(this.updateStreamersTimerID);
   }
 
   render() {

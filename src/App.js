@@ -5,6 +5,7 @@ import './App.css'
 import { observer } from 'mobx-react'
 import store from './store/store';
 import { client_id } from './store/store'
+import { toJS, } from 'mobx';
 
 // Material-ui
 import { MuiThemeProvider } from 'material-ui/styles';
@@ -81,9 +82,43 @@ class App extends Component {
         })
       })
     }
+
+    this.updateStreamersTimerID = setInterval(() => {
+      if (store.oAuth) {
+        store.updateStreamers().then((streams) => {
+          const channels = toJS(store.channels.entries())
+          for (const [key, value] of channels) {
+            const joined = toJS(value).joined
+            let stay = true
+
+            for (const [stream, value] of streams) {
+              if (key === stream) {
+                stay = true
+                break
+                // Everything is good
+              } else {
+                stay = false
+              }
+            }
+
+            if (stay === false && joined === true) {
+              store.leave(key).then(() => {
+                this.forceUpdate()
+                console.log(key, stay, toJS(store.channels.get(key)))
+              })
+            }
+          }
+        })
+      }
+    },
+      120000 // 2 minutes or 120 seconds
+    )
+
   }
 
   componentWillUnmount() {
+    console.log('App unmounted.')
+    clearInterval(this.updateStreamersTimerID);
     document.body.style.backgroundColor = null
   }
 
