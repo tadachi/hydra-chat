@@ -170,7 +170,7 @@ class Chat extends Component {
           {badgesArray}
           {userstate['display-name'] + ': '}
         </span>
-        <span style={{}} key={uuidv1()}>{parseForEmotes(message, removeHashtag(channel))}</span>
+        <span key={uuidv1()}>{parseForEmotes(message, removeHashtag(channel))}</span>
       </div>
     }
 
@@ -190,7 +190,7 @@ class Chat extends Component {
           case FRANKERFACEZ:
             emoteOrigin = twitch_emotes_map.get('FrankerZ')
             break
-          default:
+          default: //Twitch
             emoteOrigin = twitch_emotes_map.get('Kappa')
         }
 

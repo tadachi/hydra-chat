@@ -24,7 +24,7 @@ import Chat from './components/Chat'
 //Utility
 import { getParams, removeParams, getBaseUrl } from './utility/utility'
 import { jsonToMap } from './utility/JsonMapUtil'
-import { LOCAL_STORAGE, CHANNELS } from './utility/localStorageWrapper'
+import { LOCAL_STORAGE, CHANNELS, OAUTH } from './utility/localStorageWrapper'
 import CONFIG from './config'
 
 let Main = null
@@ -32,13 +32,14 @@ let ChatComponent = null
 @observer // Watches store. when data changes, re-render component.
 class App extends Component {
   componentDidMount() {
+    let oAuth
     // Fix dimensions to window height
     store.updateDimensions(window.innerWidth, window.innerHeight)
 
     // Change background color of <body>
     document.body.style.backgroundColor = store.theme.palette.background.default
 
-    const oAuth = getParams(document.location.hash)['access_token']
+    oAuth = LOCAL_STORAGE.getItem(OAUTH) ? LOCAL_STORAGE.getItem(OAUTH) : getParams(document.location.hash)['access_token']
 
     if (CONFIG.env === 'production') {
       removeParams()
@@ -144,7 +145,7 @@ class LoginLayout extends Component {
       }} container alignItems='center' justify='center'>
         <Grid direction='column' style={{ width: 500, height: 500, backgroundColor: store.theme.palette.background.default, }} container alignItems='center' justify='center'>
           <div>
-            <img style={{ width: 250, height: 250, margin: '2%' }} src={`${getBaseUrl()}/logo.jpg`} alt='logo' />
+            <img style={{ width: 250, height: 250, margin: '2%' }} src={`${getBaseUrl()}/logo.svg`} alt='logo' />
           </div>
           <div>
             <Login style={{}} client_id={client_id} />
@@ -178,13 +179,15 @@ class MainLayout extends Component {
                 <div style={{
                   position: 'sticky',
                   top: 0,
-                  height: 60,
                   display: 'flex', flexDirection: 'row',
-                  flexWrap: 'nowrap', justifyContent: 'center'
+                  flexWrap: 'nowrap', justifyContent: 'space-between',
+                  backgroundColor: store.theme.palette.background.default,
+                  zIndex: 9999,
                 }}>
-                  <div style={{ display: 'inline-block' }}><UserLogo style={{ width: '50px', }} name={store.userName} img={store.userLogo} /></div>
-                  <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.updateStreamers()}><Refresh style={{ width: '100%' }} /></IconButton></div>
-                  <div style={{ display: 'inline-block' }}><IconButton onClick={() => store.handleDrawerOpen()}><LeftArrow style={{ width: '100%' }} /></IconButton></div>
+                  <div><UserLogo style={{ height: 50, }} name={store.userName} img={store.userLogo} /></div>
+                  <div><IconButton onClick={() => store.updateStreamers()}><Refresh style={{ width: '100%' }} /></IconButton></div>
+                  <div><IconButton onClick={() => store.handleDrawerOpen()}><LeftArrow style={{ width: '100%' }} /></IconButton></div>
+
                 </div> : null}
 
               {store.developmentMode ?
@@ -207,8 +210,9 @@ class MainLayout extends Component {
                   <div><Button href={store.makeDeleteTokenURL()}>Logout</Button></div>
                 </div>
                 : null}
+              <ChannelManager />
             </div>
-            <ChannelManager />
+
           </Grid>
           : null
         }
