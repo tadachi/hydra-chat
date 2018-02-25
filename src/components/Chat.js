@@ -306,8 +306,6 @@ class Chat extends Component {
       this.forceUpdate(() => {
         this.scrollToBottom()
       })
-
-
     }
 
   }
