@@ -33,6 +33,7 @@ let ChatComponent = null
 class App extends Component {
   componentDidMount() {
     let oAuth
+
     // Fix dimensions to window height
     store.updateDimensions(window.innerWidth, window.innerHeight)
 
@@ -52,7 +53,7 @@ class App extends Component {
           Main = <MainLayout />
           ChatComponent = <Chat />
           store.updateStreamers().then((streams) => {
-            console.log(streams)
+
             let channelsToJoin = []
 
             async function process(arr) {
@@ -92,7 +93,7 @@ class App extends Component {
             const joined = toJS(value).joined
             let stay = true
 
-            for (const [stream, value] of streams) {
+            for (const [stream] of streams) {
               if (key === stream) {
                 stay = true
                 break
@@ -105,14 +106,14 @@ class App extends Component {
             if (stay === false && joined === true) {
               store.leave(key).then(() => {
                 this.forceUpdate()
-                console.log(key, stay, toJS(store.channels.get(key)))
+                // console.log(key, stay, toJS(store.channels.get(key)))
               })
             }
           }
         })
       }
     },
-      120000 // 2 minutes or 120 seconds
+      5000 // 2 minutes or 120 seconds
     )
 
   }
@@ -223,7 +224,9 @@ class MainLayout extends Component {
           overflowX: 'hidden',
           margin: 0,
         }} item xs>
-          <div style={{ display: (store.mobileScreenSize && store.drawerOpen) ? 'none' : 'inline' }}>{ChatComponent}</div>
+          <div style={{ display: (store.mobileScreenSize && store.drawerOpen) ? 'none' : 'inline' }}>
+            {ChatComponent}
+          </div>
         </Grid>
       </Grid>
     )
