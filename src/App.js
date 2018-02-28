@@ -27,10 +27,15 @@ import { jsonToMap } from './utility/JsonMapUtil'
 import { LOCAL_STORAGE, CHANNELS, OAUTH } from './utility/localStorageWrapper'
 import CONFIG from './config'
 
-let Main = null
-let ChatComponent = null
 @observer // Watches store. when data changes, re-render component.
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.Main = null
+    this.ChatComponent = null
+  }
+
   componentDidMount() {
     let oAuth
 
@@ -50,8 +55,10 @@ class App extends Component {
       store.setAccessToken(oAuth)
       store.setUserObject().then((response) => {
         store.login().then(() => {
-          Main = <MainLayout />
-          ChatComponent = <Chat />
+          // Set the components when logged in properly
+          this.ChatComponent = <Chat />
+          this.Main = <MainLayout ChatComponent={this.ChatComponent} />
+
           store.updateStreamers().then((streams) => {
 
             let channelsToJoin = []
@@ -90,7 +97,9 @@ class App extends Component {
         store.updateStreamers().then((streams) => {
           const channels = toJS(store.channels.entries())
           for (const [key, value] of channels) {
+            console.log(toJS(value))
             const joined = toJS(value).joined
+            const autoJoin = toJS(value).autoJoin
             let stay = true
 
             for (const [stream] of streams) {
@@ -103,17 +112,24 @@ class App extends Component {
               }
             }
 
+            if (joined === false && autoJoin === true) {
+              store.join(key).then(() => {
+                this.forceUpdate()
+                console.log(`Joined ${key}. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
+              })
+            }
+          
             if (stay === false && joined === true) {
               store.leave(key).then(() => {
                 this.forceUpdate()
-                // console.log(key, stay, toJS(store.channels.get(key)))
+                console.log(`Left ${key} due to streamer signing off. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
               })
             }
           }
         })
       }
     },
-      5000 // 2 minutes or 120 seconds
+      120000 // 2 minutes or 120 seconds
     )
 
   }
@@ -128,7 +144,7 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={store.theme}>
         <div>
-          {store.oAuth ? Main : <LoginLayout />}
+          {store.oAuth ? this.Main : <LoginLayout />}
         </div>
       </MuiThemeProvider>
     );
@@ -201,6 +217,7 @@ class MainLayout extends Component {
                   <div># of Messages: {store.msg_id}</div>
                   <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
+                  <div>Talking in: {store.joinedChannels.length > 0 ? store.joinedChannels[store.channelSelectValue].key : null}</div>
                   <div>colorInt: {store.colorInt}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
@@ -225,7 +242,7 @@ class MainLayout extends Component {
           margin: 0,
         }} item xs>
           <div style={{ display: (store.mobileScreenSize && store.drawerOpen) ? 'none' : 'inline' }}>
-            {ChatComponent}
+            {this.props.ChatComponent}
           </div>
         </Grid>
       </Grid>

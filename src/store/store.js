@@ -246,8 +246,7 @@ class Store {
           // Save to localStorage
           LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
-          // console.log(toJS(this.channels))
-          // console.log(toJS(this.joinedChannels))
+          console.log(toJS(this.joinedChannels))
           return true
         })
         return result
@@ -270,6 +269,7 @@ class Store {
     this.channels.set(channel, {
       key: channel,
       color: web_safe_colors[this.handleColorIncrement()],
+      autoJoin: false,
       joined: false
     })
     LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
@@ -299,8 +299,7 @@ class Store {
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           // Update the channelSelectValue to prevent [mobx.array] Attempt to read an array index (integer) that is out of bounds
           store.channelSelectValue = store.channelSelectValue >= this.joinedChannels.length ? this.joinedChannels.length - 1 : store.channelSelectValue
-          console.log(toJS(this.channels))
-          console.log(toJS(this.joinedChannels))
+
           return true
         })
         return result

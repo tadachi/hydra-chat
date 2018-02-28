@@ -13,11 +13,9 @@ import HighlightOff from 'material-ui-icons/HighlightOff'
 @observer
 class ChannelManager extends Component {
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
-  componentWillUnmount() {
-  }
+  componentWillUnmount() {}
 
   render() {
     let channels = []

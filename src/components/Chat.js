@@ -131,6 +131,7 @@ class Chat extends Component {
     this.messageCache = []
     this.regex_channel = /\/\#\S+|\S+\ +/ //['/#Tod', /#Tod    '] OK ['#Tod', '#Tod  '] Not OK.
   }
+  
   componentDidMount() {
     this.chatScroll.addEventListener('scroll', this.handleChatScroll.bind(this))
 
