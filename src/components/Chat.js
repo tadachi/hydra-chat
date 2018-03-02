@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import '../Chat.css'
+// import '../Chat.css'
 import moment from 'moment'
 import axios from 'axios'
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react'
 import store from '../store/store';
 import ReactHtmlParser from 'react-html-parser';
+import jss from 'jss'
+import preset from 'jss-preset-default'
 
 // Material-ui
 import { withTheme } from 'material-ui/styles'
@@ -29,6 +31,57 @@ import { LOCAL_STORAGE, MESSAGES, } from '../utility/localStorageWrapper'
 import { arrayToJson, jsonToArray, } from '../utility/JsonMapUtil'
 import { removeHashtag } from '../utility/utility'
 
+// One time setup with default plugins and settings.
+jss.setup(preset())
+
+const styles = {
+  emote: {
+    display: 'inline-block',
+    position: 'relative',
+    '&:hover $codeBox': {
+      display: 'flex',
+      position: 'absolute',
+      cursor: 'copy',
+      top: '-130px',
+      left: '-45px',
+      bottom: '0',
+    }
+  },
+  codeBox: {
+    display: 'none',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '120px',
+    maxWidth: '1000px',
+    height: '120px',
+    maxHeight: '1000px',
+    opacity: '.85',
+    backgroundColor: 'black',
+    color: 'black',
+    border: '2px black solid',
+  },
+  emoteOrigin: {
+    display: 'inline',
+    marginRgiht: '2px',
+  },
+  enlargeEmote: {
+    height: '50%',
+    marginBottom: '5px',
+  },
+  code: {
+    display: 'inline',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  pastMessages: {
+    opacity: 0.75,
+  }
+}
+
+const {classes} = jss.createStyleSheet(styles).attach()
+
 // Emotes
 // http://static-cdn.jtvnw.net/emoticons/v1/356/3.0
 let twitch_emotes_map = new Map()
@@ -47,11 +100,10 @@ let bttv_user_emotes_map = new Map()
 // FFZ
 let ffz_emotes_map = new Map()
 
-window.twitch_emotes_map = twitch_emotes_map
-window.ffz_emotes_map = ffz_emotes_map
-window.bttv_emotes_map = bttv_emotes_map
-window.bttv_user_emotes_map = bttv_user_emotes_map
-
+// window.twitch_emotes_map = twitch_emotes_map
+// window.ffz_emotes_map = ffz_emotes_map
+// window.bttv_emotes_map = bttv_emotes_map
+// window.bttv_user_emotes_map = bttv_user_emotes_map
 
 async function getFFZEmotes(name) {
   let config = {
@@ -131,10 +183,10 @@ class Chat extends Component {
     this.messageCache = []
     this.regex_channel = /\/\#\S+|\S+\ +/ //['/#Tod', /#Tod    '] OK ['#Tod', '#Tod  '] Not OK.
   }
-  
+
   componentDidMount() {
     this.chatScroll.addEventListener('scroll', this.handleChatScroll.bind(this))
-
+    
     store.client.on('join', (channel, username, self) => {
       if (username === store.userName) {
         goFFZ(removeHashtag(channel))
@@ -195,18 +247,16 @@ class Chat extends Component {
             emoteOrigin = twitch_emotes_map.get('Kappa')
         }
 
-        return `
-        <div class='emote'>
-          <div class='code-box'>
-            <div class='enlarge-emote'><img height='100%' alt='emote' src=${emote} /></div>
+        return `<div class=${classes.emote}>
+          <div class=${classes.codeBox}>
+            <div class=${classes.enlargeEmote}><img height='100%' alt='emote' src=${emote} /></div>
             <div>
-              <div class='emote-origin'><img alt='emoteOrigin' height='16' src=${emoteOrigin} /></div>
-              <div class='code'>${code}</div>
+              <div class=${classes.emoteOrigin}><img alt='emoteOrigin' height='16' src=${emoteOrigin} /></div>
+              <div class=${classes.code}>${code}</div>
             </div>
           </div>
-        <img style='vertical-align: middle; padding: 1px;' alt='emote' height='38' src=${emote} />
-        </div>
-        `
+          <img style='vertical-align: middle;, padding: 1px;' alt='emote' height='38' src=${emote} />
+        </div>`
       }
 
       for (let i in split_message) {
@@ -233,7 +283,7 @@ class Chat extends Component {
       return ReactHtmlParser(split_message.join(' '));
     }
 
-    let processMessage = (channel, message, key, opacity = 1) => {
+    let processMessage = (channel, message, key, past=false) => {
       let color = blueGrey[900]
 
       store.channels.get(channel) ?
@@ -241,9 +291,10 @@ class Chat extends Component {
         color = blueGrey[900]
 
       const originalBackgroundColor = { backgroundColor: color }
-      const newBackgroundColor = store.blackMessages ? { backgroundColor: null } : null
 
-      const msg = <div style={{ ...originalBackgroundColor, opacity: opacity, ...newBackgroundColor }} channel={channel} key={key}>
+      let channelClass = past === false ? channel : classes.pastMessages
+      // store.channelClasses[removeHashtag[channel]] 
+      const msg = <div className={channelClass} style={{ ...originalBackgroundColor }} key={key}>
         {message}
       </div>
 
@@ -300,13 +351,9 @@ class Chat extends Component {
         store.msg_id = store.msg_id + 1
 
         const msg = addHtmlCSSToMessage(channel, userstate, message, time)
-        const newMessage = processMessage(channel, msg, key, 0.75)
+        const newMessage = processMessage(channel, msg, key, true)
         store.messages.push(newMessage)
       }
-
-      this.forceUpdate(() => {
-        this.scrollToBottom()
-      })
     }
 
   }

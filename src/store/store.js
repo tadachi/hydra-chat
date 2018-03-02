@@ -3,6 +3,8 @@ import web_safe_colors from '../constants/web_safe_colors'
 import { toJS, observable, action } from 'mobx';
 import axios from 'axios'
 import { clean } from '../utility/utility'
+import jss from 'jss'
+import preset from 'jss-preset-default'
 
 // Utilities
 import tmi from 'twitch-js'
@@ -15,6 +17,12 @@ import { createMuiTheme } from 'material-ui/styles'
 import CONFIG from '../config'
 import { LOCAL_STORAGE, CHANNELS, OAUTH } from '../utility/localStorageWrapper'
 import { mapToJson } from '../utility/JsonMapUtil'
+import { removeHashtag } from '../utility/utility'
+
+// One time setup with default plugins and settings.
+jss.setup(preset())
+
+window.toJS = toJS
 
 const client_id = CONFIG.client_id
 const redirect_uri = CONFIG.redirect_uri
@@ -23,36 +31,35 @@ const debug = CONFIG.debug
 
 const max_length = web_safe_colors.length - 1 // off by one
 
-let deleteToken = async function (token) {
-  const config = {
-    url: 'oauth2/revoke',
-    method: 'post',
-    baseURL: 'https://api.twitch.tv/kraken',
-    data: {
-      client_id: client_id,
-      token: token,
-    },
-    headers: {
-      'Accept': 'application/vnd.twitchtv.v5+json',
-    },
-  }
-  const req = await axios.request(config).then((response) => {
-    try {
-      if (response.status === 200) {
-        console.log(response)
-        return response
-      }
-    } catch (err) {
-      console.log(err)
-      return response
-    }
-  })
+// let deleteToken = async function (token) {
+//   const config = {
+//     url: 'oauth2/revoke',
+//     method: 'post',
+//     baseURL: 'https://api.twitch.tv/kraken',
+//     data: {
+//       client_id: client_id,
+//       token: token,
+//     },
+//     headers: {
+//       'Accept': 'application/vnd.twitchtv.v5+json',
+//     },
+//   }
+//   const req = await axios.request(config).then((response) => {
+//     try {
+//       if (response.status === 200) {
+//         console.log(response)
+//         return response
+//       }
+//     } catch (err) {
+//       console.log(err)
+//       return response
+//     }
+//   })
 
-  return req
+//   return req
+// }
 
-}
-
-window.deleteToken = deleteToken
+// window.deleteToken = deleteToken
 
 class Store {
   // App
@@ -97,10 +104,12 @@ class Store {
   @observable channelSelectValue = 0
   @observable joinedChannels = []
   @observable msg_id = 0
-  @observable scrollToEnd = false
+  @observable scrollToEnd = true
   @observable chatMenuOpen = false
   @observable messages = []
   @observable blackMessages = false
+  @observable channelsStyleSheet = {}
+  @observable channelsClasses = jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
   colorInt = 0
 
   // Login
@@ -247,12 +256,15 @@ class Store {
           LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           console.log(toJS(this.joinedChannels))
+          console.log(toJS(this.channelCSS))
+          this.channelSelectValue = this.channelSelectValue <= -1 ? 0 : this.channelSelectValue
           return true
         })
         return result
-      } else {
-        console.log(`${channel} not found/online. Will not join.`)
       }
+      // else {
+      //   console.log(`${channel} not found/online. Will not join.`)
+      // }
     } catch (err) {
       console.log(err)
       return false
@@ -298,7 +310,7 @@ class Store {
           LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           // Update the channelSelectValue to prevent [mobx.array] Attempt to read an array index (integer) that is out of bounds
-          store.channelSelectValue = store.channelSelectValue >= this.joinedChannels.length ? this.joinedChannels.length - 1 : store.channelSelectValue
+          this.channelSelectValue = this.channelSelectValue >= this.joinedChannels.length ? this.joinedChannels.length : this.channelSelectValue
 
           return true
         })
@@ -358,11 +370,29 @@ class Store {
     return lastColorInt
   }
 
-}
+  /**
+   * Highlight messages of streamer
+   * 
+   * @param {any} streamer 
+   * @memberof Store
+   */
+  @action highlight(streamer) {
+    this.channelsStyleSheet = {}
+    for (const k of this.joinedChannels) {
+      this.channelsStyleSheet[removeHashtag(k.key)] = streamer === k.key ? { border: '2px red solid', } : {}
+    }
+    console.log(toJS(this.channelsStyleSheet))
+    jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
+  }
 
-// function randomIntFromInterval(min, max) {
-//   return Math.floor(Math.random() * (max - min + 1) + min);
-// }
+  @action setChannelsClasses() {
+    this.channelsStyleSheet = {}
+    for (const k of this.joinedChannels) {
+      this.channelsStyleSheet[removeHashtag(k.key)] = {}
+    }
+    jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
+  }
+}
 
 let store = window.store = new Store()
 

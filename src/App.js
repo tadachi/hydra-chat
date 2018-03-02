@@ -79,7 +79,9 @@ class App extends Component {
                     store.addChannel(k)
                   }
                 }
-                process(channelsToJoin)
+                process(channelsToJoin).then(() => {
+                  store.setChannelsClasses()
+                })
               }
 
             } catch (err) {
@@ -94,35 +96,36 @@ class App extends Component {
 
     this.updateStreamersTimerID = setInterval(() => {
       if (store.oAuth) {
+
         store.updateStreamers().then((streams) => {
           const channels = toJS(store.channels.entries())
           for (const [key, value] of channels) {
-            console.log(toJS(value))
             const joined = toJS(value).joined
             const autoJoin = toJS(value).autoJoin
-            let stay = true
+            let online = true
 
             for (const [stream] of streams) {
               if (key === stream) {
-                stay = true
+                online = true
                 break
                 // Everything is good
               } else {
-                stay = false
+                online = false
               }
             }
 
-            if (joined === false && autoJoin === true) {
+            // AutoJoin if set to true.
+            if (online === true && joined === false && autoJoin === true) {
               store.join(key).then(() => {
                 this.forceUpdate()
-                console.log(`Joined ${key}. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
+                // console.log(`Joined ${key}. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
               })
             }
-          
-            if (stay === false && joined === true) {
+            // Leave if stream goes offline but autoJoin remains true
+            if (online === false && joined === true) {
               store.leave(key).then(() => {
                 this.forceUpdate()
-                console.log(`Left ${key} due to streamer signing off. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
+                console.log(`Left ${key} due to streamer signing off. online: ${online}, joined: ${toJS(store.channels.get(key).joined)}, autoJoin: ${autoJoin}`)
               })
             }
           }
@@ -208,7 +211,7 @@ class MainLayout extends Component {
                 </div> : null}
 
               {store.developmentMode ?
-                <div>
+                <div style={{position: 'sticky', top: 0, zIndex: 9999}}>
                   <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
                   <div><Button onClick={() => store.handleDrawerOpen()}>Close ChannelManager</Button></div>
                   <div><WindowDimensions /></div>
@@ -217,7 +220,9 @@ class MainLayout extends Component {
                   <div># of Messages: {store.msg_id}</div>
                   <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
-                  <div>Talking in: {store.joinedChannels.length > 0 ? store.joinedChannels[store.channelSelectValue].key : null}</div>
+                  <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ? 
+                    store.joinedChannels[store.channelSelectValue].key 
+                    : null}</div>
                   <div>colorInt: {store.colorInt}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
