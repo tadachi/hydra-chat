@@ -1,6 +1,6 @@
 # Hydra-Chat
 
-This is the my 3rd and latest iteration of all the features I only want and need in Twitch's chat. 
+This is the my latest iteration of all the features I want in Twitch's chat. 
 
 ## Use Cases
 
@@ -9,5 +9,13 @@ This is the my 3rd and latest iteration of all the features I only want and need
 2. *join a bunch* of small, comfy streams you frequent and never miss a message.
 
 ## Features
+
+* Join multiple channels
+* Colored messages based on channel
+* Fast and lightweight
+* Has desktop and mobile resolutions
+* Fast channel switching (use UpArrow and DownArrow)
+* Highlight and focus on current channel
+* Set Messages to colorless
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
