@@ -17,6 +17,7 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 
 // Utility
 import { LOCAL_STORAGE, MESSAGES, } from '../utility/localStorageWrapper'
+import { removeHashtag } from '../utility/utility'
 
 @observer
 class ChatMenu extends React.Component {
@@ -36,8 +37,14 @@ class ChatMenu extends React.Component {
     LOCAL_STORAGE.removeItem(MESSAGES)
   }
 
-  updateAllBlackMessages() {
-    store.blackMessages = !store.blackMessages
+  handleToggleMessagesNoColor = () => {
+    store.handleToggleMessagesNoColor()
+    store.toggleMessagesNoColor()
+  }
+
+  handleToggleHighlight = () => {
+    store.handleToggleHighlight()
+    store.toggleHighlight(removeHashtag(store.joinedChannels[store.channelSelectValue].key))
   }
 
   componentDidMount() { }
@@ -75,11 +82,19 @@ class ChatMenu extends React.Component {
                 </Button>
               </ListItem>
               <ListItem key={1} dense button>
-                <ListItemText primary={'Set future messages to be dark:'} />
+                <ListItemText primary={'Set messages to be colorless:'} />
                 <Checkbox
-                  checked={store.blackMessages}
+                  checked={store.messagesNoColor}
                   tabIndex={-1}
-                  onChange={this.updateAllBlackMessages.bind(this)}
+                  onChange={this.handleToggleMessagesNoColor}
+                />
+              </ListItem>
+              <ListItem key={2} dense button>
+                <ListItemText primary={'Highlight current room you are chatting in:'} />
+                <Checkbox
+                  checked={store.highlight}
+                  tabIndex={-1}
+                  onChange={this.handleToggleHighlight}
                 />
               </ListItem>
             </List>

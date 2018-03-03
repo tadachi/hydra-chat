@@ -284,21 +284,19 @@ class Chat extends Component {
     }
 
     let processMessage = (channel, message, key, past=false) => {
-      let color = blueGrey[900]
+      // let color = blueGrey[900]
       let channelClass = null
-      store.channels.get(channel) ?
-        color = store.channels.get(channel).color :
-        color = blueGrey[900]
-
-      const originalBackgroundColor = { backgroundColor: color }
+      // store.channels.get(channel) ?
+      //   color = store.channels.get(channel).color :
+      //   color = blueGrey[900]
 
       if (past) {
         channelClass = classes.pastMessages
       } else {
         channelClass = store.channelsSheet.classes[removeHashtag(channel)] || null
       }
-      
-      const msg = <div className={channelClass} style={{ ...originalBackgroundColor }} key={key}>
+
+      const msg = <div className={channelClass} key={key}>
         {message}
       </div>
 
@@ -403,6 +401,7 @@ class Chat extends Component {
   handleChange(e) {
     const index = parseInt(e.target.value, 10)
     store.channelSelectValue = index
+    this.handleHighlight()
   }
 
   handleChatScroll() {
@@ -415,6 +414,11 @@ class Chat extends Component {
         store.scrollToEnd = false
       }
     }
+  }
+
+  handleHighlight() {
+    const channel = store.joinedChannels[store.channelSelectValue].key
+    store.toggleHighlight(removeHashtag(channel))
   }
 
   scrollToBottom() {
@@ -431,6 +435,7 @@ class Chat extends Component {
         } else {
           store.channelSelectValue = 0
         }
+        this.handleHighlight()
       }
       if (event.key === 'ArrowDown') {
         if (store.channelSelectValue < store.joinedChannels.length && store.channelSelectValue > 0) {
@@ -438,6 +443,7 @@ class Chat extends Component {
         } else {
           store.channelSelectValue = store.joinedChannels.length - 1
         }
+        this.handleHighlight()
       }
     } catch (err) {
       console.log(err)

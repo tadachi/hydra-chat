@@ -77,10 +77,10 @@ class Store {
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
   @observable messages = []
-  @observable blackMessages = false
   @observable channelsStyles = {}
   @observable channelsSheet = jss.createStyleSheet(this.channelsStyleSheet, { link: true }).attach()
-  @observable highlight
+  @observable highlight = false
+  @observable messagesNoColor = false
   colorInt = 0
 
   // Login
@@ -216,10 +216,11 @@ class Store {
   @action async join(channel) {
     try {
       if (this.streams.get(channel)) {
+        const color = web_safe_colors[this.handleColorIncrement()]
         const result = await this.client.join(channel).then((data) => {
           this.channels.set(channel, {
             key: channel,
-            color: web_safe_colors[this.handleColorIncrement()],
+            color: color,
             joined: true,
             autoJoin: true,
           })
@@ -230,6 +231,8 @@ class Store {
           console.log(toJS(this.channelCSS))
           this.channelSelectValue = this.channelSelectValue <= -1 ? 0 : this.channelSelectValue
           this.channelsSheet.addRule(removeHashtag(channel), {
+            originalBackgroundColor: color,
+            backgroundColor: this.messagesNoColor ? this.theme.palette.background.default : color,
             opacity: 1
           })
           return true
@@ -285,7 +288,7 @@ class Store {
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           // Update the channelSelectValue to prevent [mobx.array] Attempt to read an array index (integer) that is out of bounds
           this.channelSelectValue = this.channelSelectValue >= this.joinedChannels.length ? this.joinedChannels.length : this.channelSelectValue
-          this.channelsSheet.deleteRule(removeHashtag(channel))
+          // this.channelsSheet.deleteRule(removeHashtag(channel))
           return true
         })
         return result
@@ -354,26 +357,56 @@ class Store {
     this.channelsSheet = jss.createStyleSheet(this.channelsStyles, { link: true }).attach()
   }
 
+  @action handleToggleHighlight() {
+    this.highlight = !this.highlight
+  }
+
   /**
    * Highlight messages of streamer
    * 
    * @param {any} streamer 
    * @memberof Store
    */
-  @action setHighlight(streamer) {
-    for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
-      (streamer === k) ? this.setOpacityRule(k, 1) : this.setOpacityRule(k, 0.5)
-    }
-  }
+  @action toggleHighlight(streamer) {
 
-  @action removeHighlight() {
-    for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
-      this.setOpacityRule(k, 1)
+    if (this.highlight) {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        (streamer === k) ? this.setOpacityRule(k, 1) : this.setOpacityRule(k, 0.5)
+      }
+    } else {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        this.setOpacityRule(k, 1)
+      }
     }
   }
 
   @action setOpacityRule(name, opacity) {
     this.channelsSheet.getRule(name).prop('opacity', opacity)
+  }
+
+  @action setBackgroundRule(name, color) {
+    this.channelsSheet.getRule(name).prop('backgroundColor', `${color}`)
+  }
+
+  @action handleToggleMessagesNoColor() {
+    this.messagesNoColor = !this.messagesNoColor
+  }
+
+  @action toggleMessagesNoColor() {
+    const color = store.theme.palette.background.default
+    console.log(color)
+    if (this.messagesNoColor) {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        this.channelsSheet.getRule(k).prop('background-color', `${color}`)
+      }
+      console.log(this.messagesNoColor, store.channelsSheet.rules.raw)
+    } else {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        const originalBackgroundColor = this.channelsSheet.getRule(k).style['original-background-color']
+        this.channelsSheet.getRule(k).prop('background-color', `${originalBackgroundColor}`)
+      }
+      console.log(this.messagesNoColor, store.channelsSheet.rules.raw)
+    }
   }
 }
 
