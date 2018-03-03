@@ -186,7 +186,7 @@ class Chat extends Component {
 
   componentDidMount() {
     this.chatScroll.addEventListener('scroll', this.handleChatScroll.bind(this))
-    
+
     store.client.on('join', (channel, username, self) => {
       if (username === store.userName) {
         goFFZ(removeHashtag(channel))
@@ -285,15 +285,19 @@ class Chat extends Component {
 
     let processMessage = (channel, message, key, past=false) => {
       let color = blueGrey[900]
-
+      let channelClass = null
       store.channels.get(channel) ?
         color = store.channels.get(channel).color :
         color = blueGrey[900]
 
       const originalBackgroundColor = { backgroundColor: color }
 
-      let channelClass = past === false ? channel : classes.pastMessages
-      // store.channelClasses[removeHashtag[channel]] 
+      if (past) {
+        channelClass = classes.pastMessages
+      } else {
+        channelClass = store.channelsSheet.classes[removeHashtag(channel)] || null
+      }
+      
       const msg = <div className={channelClass} style={{ ...originalBackgroundColor }} key={key}>
         {message}
       </div>

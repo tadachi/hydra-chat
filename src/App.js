@@ -79,9 +79,7 @@ class App extends Component {
                     store.addChannel(k)
                   }
                 }
-                process(channelsToJoin).then(() => {
-                  store.setChannelsClasses()
-                })
+                process(channelsToJoin)
               }
 
             } catch (err) {
@@ -230,7 +228,6 @@ class MainLayout extends Component {
                   <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
                   <div>widthBreakPoint: {String(store.widthBreakPoint)}</div>
                   <div>blackMessages: {String(store.blackMessages)}</div>
-                  <div><Button href={store.makeDeleteTokenURL()}>Logout</Button></div>
                 </div>
                 : null}
               <ChannelManager />

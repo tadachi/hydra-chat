@@ -31,36 +31,6 @@ const debug = CONFIG.debug
 
 const max_length = web_safe_colors.length - 1 // off by one
 
-// let deleteToken = async function (token) {
-//   const config = {
-//     url: 'oauth2/revoke',
-//     method: 'post',
-//     baseURL: 'https://api.twitch.tv/kraken',
-//     data: {
-//       client_id: client_id,
-//       token: token,
-//     },
-//     headers: {
-//       'Accept': 'application/vnd.twitchtv.v5+json',
-//     },
-//   }
-//   const req = await axios.request(config).then((response) => {
-//     try {
-//       if (response.status === 200) {
-//         console.log(response)
-//         return response
-//       }
-//     } catch (err) {
-//       console.log(err)
-//       return response
-//     }
-//   })
-
-//   return req
-// }
-
-// window.deleteToken = deleteToken
-
 class Store {
   // App
   developmentMode = debug
@@ -108,8 +78,9 @@ class Store {
   @observable chatMenuOpen = false
   @observable messages = []
   @observable blackMessages = false
-  @observable channelsStyleSheet = {}
-  @observable channelsClasses = jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
+  @observable channelsStyles = {}
+  @observable channelsSheet = jss.createStyleSheet(this.channelsStyleSheet, { link: true }).attach()
+  @observable highlight
   colorInt = 0
 
   // Login
@@ -258,6 +229,9 @@ class Store {
           console.log(toJS(this.joinedChannels))
           console.log(toJS(this.channelCSS))
           this.channelSelectValue = this.channelSelectValue <= -1 ? 0 : this.channelSelectValue
+          this.channelsSheet.addRule(removeHashtag(channel), {
+            opacity: 1
+          })
           return true
         })
         return result
@@ -311,7 +285,7 @@ class Store {
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
           // Update the channelSelectValue to prevent [mobx.array] Attempt to read an array index (integer) that is out of bounds
           this.channelSelectValue = this.channelSelectValue >= this.joinedChannels.length ? this.joinedChannels.length : this.channelSelectValue
-
+          this.channelsSheet.deleteRule(removeHashtag(channel))
           return true
         })
         return result
@@ -321,7 +295,6 @@ class Store {
       return false
     }
   }
-
 
   /**
    * Update width and height of the whole app.
@@ -370,27 +343,37 @@ class Store {
     return lastColorInt
   }
 
+  @action initializeChannelSheetRules() {
+    jss.removeStyleSheet(this.channelsSheet)
+    this.channelsStyles = {}
+    for (const k of this.joinedChannels) {
+      this.channelsStyles[removeHashtag(k.key)] = {
+        opacity: 1
+      }
+    }
+    this.channelsSheet = jss.createStyleSheet(this.channelsStyles, { link: true }).attach()
+  }
+
   /**
    * Highlight messages of streamer
    * 
    * @param {any} streamer 
    * @memberof Store
    */
-  @action highlight(streamer) {
-    this.channelsStyleSheet = {}
-    for (const k of this.joinedChannels) {
-      this.channelsStyleSheet[removeHashtag(k.key)] = streamer === k.key ? { border: '2px red solid', } : {}
+  @action setHighlight(streamer) {
+    for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+      (streamer === k) ? this.setOpacityRule(k, 1) : this.setOpacityRule(k, 0.5)
     }
-    console.log(toJS(this.channelsStyleSheet))
-    jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
   }
 
-  @action setChannelsClasses() {
-    this.channelsStyleSheet = {}
-    for (const k of this.joinedChannels) {
-      this.channelsStyleSheet[removeHashtag(k.key)] = {}
+  @action removeHighlight() {
+    for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+      this.setOpacityRule(k, 1)
     }
-    jss.createStyleSheet(toJS(this.channelsStyleSheet)).attach()
+  }
+
+  @action setOpacityRule(name, opacity) {
+    this.channelsSheet.getRule(name).prop('opacity', opacity)
   }
 }
 
