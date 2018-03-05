@@ -12,11 +12,12 @@ This is the my latest iteration of all the features I want in Twitch's chat.
 
 * Join multiple channels
 * Colored messages based on channel
-* Support on the most recent IE(Edge)/Firefox/Chrome browsers
+* Authentication is handled only by Twitch and your twitch account.
+* Supports most recent IE(Edge)/Firefox/Chrome browsers
 * Fast and lightweight
 * Has desktop and mobile resolutions
 * Fast channel switching (use UpArrow and DownArrow)
 * Highlight and focus on current channel
-* Set Messages to colorless
+* Set messages to colorless
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
