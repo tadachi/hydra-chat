@@ -81,6 +81,7 @@ class Store {
   @observable channelsSheet = jss.createStyleSheet(this.channelsStyleSheet, { link: true }).attach()
   @observable highlight = false
   @observable messagesNoColor = false
+  @observable hideNonHighlighted = false
   colorInt = 0
 
   // Login
@@ -346,6 +347,23 @@ class Store {
     return lastColorInt
   }
 
+  @action handleToggleHighlight() {
+    this.highlight = !this.highlight
+  }
+
+  @action handleToggleMessagesNoColor() {
+    this.messagesNoColor = !this.messagesNoColor
+  }
+
+  @action handleTogglehideNonHighlighted() {
+    this.hideNonHighlighted = !this.hideNonHighlighted
+  }
+  
+  /**
+   * Initialize channel style sheet rules. Useful if it isn't initialized already
+   * 
+   * @memberof Store
+   */
   @action initializeChannelSheetRules() {
     jss.removeStyleSheet(this.channelsSheet)
     this.channelsStyles = {}
@@ -355,10 +373,6 @@ class Store {
       }
     }
     this.channelsSheet = jss.createStyleSheet(this.channelsStyles, { link: true }).attach()
-  }
-
-  @action handleToggleHighlight() {
-    this.highlight = !this.highlight
   }
 
   /**
@@ -380,18 +394,33 @@ class Store {
     }
   }
 
+  /**
+   * Set opacity of the channels style sheet
+   * 
+   * @param {any} name 
+   * @param {any} opacity 
+   * @memberof Store
+   */
   @action setOpacityRule(name, opacity) {
     this.channelsSheet.getRule(name).prop('opacity', opacity)
   }
 
+  /**
+   * Set background color of a rule in channels style sheet.
+   * 
+   * @param {any} name 
+   * @param {any} color 
+   * @memberof Store
+   */
   @action setBackgroundRule(name, color) {
     this.channelsSheet.getRule(name).prop('backgroundColor', `${color}`)
   }
 
-  @action handleToggleMessagesNoColor() {
-    this.messagesNoColor = !this.messagesNoColor
-  }
-
+  /**
+   * Set all messages to have no color background.
+   * 
+   * @memberof Store
+   */
   @action toggleMessagesNoColor() {
     const color = store.theme.palette.background.default
     console.log(color)
@@ -408,6 +437,16 @@ class Store {
       console.log(this.messagesNoColor, store.channelsSheet.rules.raw)
     }
   }
+
+  /**
+   * Hides non highlighted messages
+   * 
+   * @memberof Store
+   */
+  @action toggleHideNonHighlighted() {
+    
+  }
+
 }
 
 let store = window.store = new Store()

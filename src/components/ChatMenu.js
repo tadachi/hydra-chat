@@ -46,7 +46,11 @@ class ChatMenu extends React.Component {
     store.handleToggleHighlight()
     store.toggleHighlight(removeHashtag(store.joinedChannels[store.channelSelectValue].key))
   }
-
+  
+  handleTogglehideNonHighlighted = () => {
+    store.handleTogglehideNonHighlighted()
+    // store.toggleHighlight(removeHashtag(store.joinedChannels[store.channelSelectValue].key))
+  }
   componentDidMount() { }
 
   render() {
@@ -93,6 +97,14 @@ class ChatMenu extends React.Component {
                 <ListItemText primary={'Highlight current room you are chatting in:'} />
                 <Checkbox
                   checked={store.highlight}
+                  tabIndex={-1}
+                  onChange={this.handleToggleHighlight}
+                />
+              </ListItem>
+              <ListItem key={3} dense button>
+                <ListItemText primary={'Highlight current room you are chatting in:'} />
+                <Checkbox
+                  checked={store.hideNonHighlighted}
                   tabIndex={-1}
                   onChange={this.handleToggleHighlight}
                 />
