@@ -419,6 +419,7 @@ class Chat extends Component {
   handleHighlight() {
     const channel = store.joinedChannels[store.channelSelectValue].key
     store.toggleHighlight(removeHashtag(channel))
+    store.toggleHideNonHighlighted(removeHashtag(channel))
   }
 
   scrollToBottom() {

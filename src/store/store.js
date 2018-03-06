@@ -232,9 +232,10 @@ class Store {
           console.log(toJS(this.channelCSS))
           this.channelSelectValue = this.channelSelectValue <= -1 ? 0 : this.channelSelectValue
           this.channelsSheet.addRule(removeHashtag(channel), {
-            originalBackgroundColor: color,
+            display: this.hideNonHighlighted ? 'none' : 'default',
             backgroundColor: this.messagesNoColor ? this.theme.palette.background.default : color,
-            opacity: 1
+            originalBackgroundColor: color,
+            opacity: this.highlight ? 0.75 : 1,
           })
           return true
         })
@@ -376,25 +377,6 @@ class Store {
   }
 
   /**
-   * Highlight messages of streamer
-   * 
-   * @param {any} streamer 
-   * @memberof Store
-   */
-  @action toggleHighlight(streamer) {
-
-    if (this.highlight) {
-      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
-        (streamer === k) ? this.setOpacityRule(k, 1) : this.setOpacityRule(k, 0.5)
-      }
-    } else {
-      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
-        this.setOpacityRule(k, 1)
-      }
-    }
-  }
-
-  /**
    * Set opacity of the channels style sheet
    * 
    * @param {any} name 
@@ -417,24 +399,53 @@ class Store {
   }
 
   /**
+   * Set custom rule for channels style sheet
+   * 
+   * @param {any} name 
+   * @param {any} rule 
+   * @param {any} data 
+   * @memberof Store
+   */
+  @action setCustomRule(name, rule, data) {
+    this.channelsSheet.getRule(name).prop(rule, data)
+  }
+
+  /**
+   * Highlight messages of streamer
+   * 
+   * @param {any} streamer 
+   * @memberof Store
+   */
+  @action toggleHighlight(streamer) {
+
+    if (this.highlight) {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        (streamer === k) ? this.setOpacityRule(k, 1) : this.setOpacityRule(k, 0.5)
+      }
+    } else {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        this.setOpacityRule(k, 1)
+      }
+    }
+  }
+
+
+  /**
    * Set all messages to have no color background.
    * 
    * @memberof Store
    */
   @action toggleMessagesNoColor() {
     const color = store.theme.palette.background.default
-    console.log(color)
     if (this.messagesNoColor) {
       for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
         this.channelsSheet.getRule(k).prop('background-color', `${color}`)
       }
-      console.log(this.messagesNoColor, store.channelsSheet.rules.raw)
     } else {
       for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
         const originalBackgroundColor = this.channelsSheet.getRule(k).style['original-background-color']
         this.channelsSheet.getRule(k).prop('background-color', `${originalBackgroundColor}`)
       }
-      console.log(this.messagesNoColor, store.channelsSheet.rules.raw)
     }
   }
 
@@ -443,8 +454,16 @@ class Store {
    * 
    * @memberof Store
    */
-  @action toggleHideNonHighlighted() {
-    
+  @action toggleHideNonHighlighted(streamer) {
+    if (this.hideNonHighlighted) {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        (streamer === k) ? this.setCustomRule(k, 'display', 'default') : this.setCustomRule(k, 'display', 'none')
+      }
+    } else {
+      for (const [k, v] of Object.entries(this.channelsSheet.classes)) {
+        this.setCustomRule(k, 'display', 'default') 
+      }
+    }
   }
 
 }

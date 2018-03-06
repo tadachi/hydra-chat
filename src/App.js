@@ -145,6 +145,7 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={store.theme}>
         <div>
+          <div style={{ display: 'none' }}><WindowDimensions /></div>
           {store.oAuth ? this.Main : <LoginLayout />}
         </div>
       </MuiThemeProvider>
@@ -168,7 +169,6 @@ class LoginLayout extends Component {
           <div>
             <Login style={{}} client_id={client_id} />
           </div>
-          <div style={{ visibility: 'hidden' }}><WindowDimensions /></div>
         </Grid>
       </Grid>
     )
@@ -209,7 +209,7 @@ class MainLayout extends Component {
                 </div> : null}
 
               {store.developmentMode ?
-                <div style={{position: 'sticky', top: 0, zIndex: 9999}}>
+                <div style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
                   <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
                   <div><Button onClick={() => store.handleDrawerOpen()}>Close ChannelManager</Button></div>
                   <div><WindowDimensions /></div>
@@ -218,8 +218,8 @@ class MainLayout extends Component {
                   <div># of Messages: {store.msg_id}</div>
                   <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
-                  <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ? 
-                    store.joinedChannels[store.channelSelectValue].key 
+                  <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ?
+                    store.joinedChannels[store.channelSelectValue].key
                     : null}</div>
                   <div>colorInt: {store.colorInt}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>

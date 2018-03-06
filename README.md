@@ -12,6 +12,8 @@ This is the my latest iteration of all the features I want in Twitch's chat.
 
 * Join multiple channels
 * Colored messages based on channel
+* Global Twitch, FrankerFaceZ, BetterTwitchTV emote support
+* Limited Badge support (Moderators, Broadcasters so far)
 * Authentication is handled only by Twitch and your twitch account.
 * Supports most recent IE(Edge)/Firefox/Chrome browsers
 * Fast and lightweight
