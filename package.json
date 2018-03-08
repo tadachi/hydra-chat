@@ -15,6 +15,7 @@
     "mobx": "^3.4.1",
     "mobx-react": "^4.3.5",
     "moment": "^2.20.1",
+    "npm": "^5.7.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-html-parser": "^2.0.2",
