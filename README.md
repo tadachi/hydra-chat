@@ -19,6 +19,7 @@ This is the my latest iteration of all the features I want in Twitch's chat.
 * Fast and lightweight
 * Has desktop and mobile resolutions
 * Fast channel switching (use UpArrow and DownArrow)
+* Auto-joins online channels after window closes
 * Highlight and focus on current channel
 * Set messages to colorless
 
