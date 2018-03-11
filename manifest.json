@@ -1,11 +1,26 @@
 {
   "short_name": "Hydra-Chat",
-  "name": "Twitch Multi-channel chat client",
+  "name": "A Twitch Chat Client",
   "icons": [
     {
       "src": "pwa_logo.jpg",
       "sizes": "192x192",
       "type": "image/jpg"
+    },  
+    {  
+      "src": "pwa_logo256.jpg",  
+      "sizes": "256x256",  
+      "type": "image/jpg"  
+    },  
+    {  
+      "src": "pwa_logo384.jpg",  
+      "sizes": "384x384",  
+      "type": "image/jpg"  
+    },  
+    {  
+      "src": "pwa_logo512.jpg",  
+      "sizes": "512x512",  
+      "type": "image/jpg"  
     }
   ],
   "start_url": "./index.html",
