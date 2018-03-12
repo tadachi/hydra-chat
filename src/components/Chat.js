@@ -524,7 +524,7 @@ class Chat extends Component {
           <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
           <div style={{ position: 'relative', }}>
             <div style={{ position: 'absolute', right: 5, }}>
-              <IconButton onClick={() => console.log('test')}><Face /></IconButton>
+              {/* <IconButton onClick={() => console.log('test')}><Face /></IconButton> */}
             </div>
           </div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>

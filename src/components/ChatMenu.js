@@ -16,7 +16,8 @@ import Checkbox from 'material-ui/Checkbox';
 import List, { ListItem, ListItemText } from 'material-ui/List';
 
 // Utility
-import { LOCAL_STORAGE, MESSAGES, } from '../utility/localStorageWrapper'
+import { LOCAL_STORAGE, CHANNELS, MESSAGES } from '../utility/localStorageWrapper'
+import { jsonToArray } from '../utility/JsonMapUtil'
 import { removeHashtag } from '../utility/utility'
 
 @observer
@@ -46,14 +47,26 @@ class ChatMenu extends React.Component {
     store.handleToggleHighlight()
     store.toggleHighlight(removeHashtag(store.joinedChannels[store.channelSelectValue].key))
   }
-  
+
   handleTogglehideNonHighlighted = () => {
     store.handleTogglehideNonHighlighted()
     store.toggleHideNonHighlighted(removeHashtag(store.joinedChannels[store.channelSelectValue].key))
   }
-  componentDidMount() { }
+  componentDidMount() { 
+
+  }
 
   render() {
+
+    let channels = []
+
+    for (const [channel, v] of jsonToArray(LOCAL_STORAGE.getItem(CHANNELS))) {
+      v.autoJoin === true && channels.push(
+        <ListItem button key={v.key}>
+          <ListItemText primary={channel} />
+        </ListItem>
+      ) 
+    }
 
     return (
       <div>
@@ -63,20 +76,6 @@ class ChatMenu extends React.Component {
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Settings</DialogTitle>
-          {/* <DialogContentText>
-              To subscribe to this website, please enter your email address here. We will send
-              updates occationally.
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Email Address"
-              type="email"
-              fullWidth
-            /> */}
-
           <DialogContent>
             <List>
               <ListItem key={0} dense button>
@@ -109,13 +108,13 @@ class ChatMenu extends React.Component {
                   onChange={this.handleTogglehideNonHighlighted}
                 />
               </ListItem>
+              {/* <ListItem key={4}>
+                <List>
+                  {channels}
+                </List>
+              </ListItem> */}
             </List>
           </DialogContent>
-          {/* <DialogContent>
-            <Button raised onClick={this.test.bind(this)}>
-              Test
-            </Button>
-          </DialogContent> */}
           <DialogActions>
             <Button onClick={this.handleClose}>
               Close

@@ -117,7 +117,7 @@ class App extends Component {
             if (online === true && joined === false && autoJoin === true) {
               store.join(key).then(() => {
                 this.forceUpdate()
-                // console.log(`Joined ${key}. stay: ${stay}, joined: ${joined}, autoJoin: ${autoJoin}`)
+                console.log(`Auto joined ${key}. joined: ${joined}, autoJoin: ${autoJoin}`)
               })
             }
             // Leave if stream goes offline but autoJoin remains true

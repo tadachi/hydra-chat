@@ -228,7 +228,6 @@ class Store {
           // Save to localStorage
           LOCAL_STORAGE.setItem(CHANNELS, mapToJson(this.channels))
           this.joinedChannels = _.filter(toJS(this.channels), (ch) => { if (ch) return ch.joined })
-          console.log(toJS(this.joinedChannels))
           this.channelSelectValue = this.channelSelectValue <= -1 ? 0 : this.channelSelectValue
           this.channelsSheet.addRule(removeHashtag(channel), {
             display: this.hideNonHighlighted ? 'none' : 'default',
