@@ -12,13 +12,13 @@ import preset from 'jss-preset-default'
 // Material-ui
 import { withTheme } from 'material-ui/styles'
 import { MenuItem } from 'material-ui/Menu';
-import { blueGrey } from 'material-ui/colors'
 import Select from 'material-ui/Select'
 import IconButton from 'material-ui/IconButton'
 import TextField from 'material-ui/TextField'
 import RightArrow from 'material-ui-icons/KeyboardArrowRight'
 import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowDownward from 'material-ui-icons/ArrowDownward'
+import Face from 'material-ui-icons/Face'
 
 // Components
 import ChatMenu from './ChatMenu'
@@ -80,7 +80,7 @@ const styles = {
   }
 }
 
-const {classes} = jss.createStyleSheet(styles).attach()
+const { classes } = jss.createStyleSheet(styles).attach()
 
 // Emotes
 // http://static-cdn.jtvnw.net/emoticons/v1/356/3.0
@@ -283,7 +283,7 @@ class Chat extends Component {
       return ReactHtmlParser(split_message.join(' '));
     }
 
-    let processMessage = (channel, message, key, past=false) => {
+    let processMessage = (channel, message, key, past = false) => {
       // let color = blueGrey[900]
       let channelClass = null
       // store.channels.get(channel) ?
@@ -494,7 +494,7 @@ class Chat extends Component {
     const textAreaChat = store.joinedChannels.length > 0 ?
       <TextField
         placeholder=
-        {store.joinedChannels[store.channelSelectValue] ? `${store.joinedChannels[store.channelSelectValue].key}` :
+        {store.joinedChannels[store.channelSelectValue] !== undefined ? `${store.joinedChannels[store.channelSelectValue].key}` :
           `Send a Message`
         }
         inputRef={(el) => { this.messageInput = el }}
@@ -506,7 +506,9 @@ class Chat extends Component {
     const drawerControl = <IconButton onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
 
     return (
+
       <div style={{ height: store.height }}>
+
         {chatArea}
         <div style={{
           width: w, height: 60, minHeight: 60, maxHeight: 60,
@@ -520,6 +522,11 @@ class Chat extends Component {
           <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
           <div style={{}}><ChatMenu /></div>
           <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
+          <div style={{ position: 'relative', }}>
+            <div style={{ position: 'absolute', right: 5, }}>
+              <IconButton onClick={() => console.log('test')}><Face /></IconButton>
+            </div>
+          </div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
           <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
         </div>

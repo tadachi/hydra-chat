@@ -97,6 +97,7 @@ class App extends Component {
 
         store.updateStreamers().then((streams) => {
           const channels = toJS(store.channels.entries())
+          if (streams === undefined) { return }
           for (const [key, value] of channels) {
             const joined = toJS(value).joined
             const autoJoin = toJS(value).autoJoin
@@ -218,9 +219,9 @@ class MainLayout extends Component {
                   <div># of Messages: {store.msg_id}</div>
                   <div># of Streams: {store.streams.entries().length}</div>
                   <div># of Channels Joined: {store.joinedChannels.length}</div>
-                  <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ?
+                  {/* <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ?
                     store.joinedChannels[store.channelSelectValue].key
-                    : null}</div>
+                    : null}</div> */}
                   <div>colorInt: {store.colorInt}</div>
                   <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
                   <div>scrollToEnd: {String(store.scrollToEnd)}</div>
