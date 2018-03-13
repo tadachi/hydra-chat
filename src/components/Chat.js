@@ -422,6 +422,10 @@ class Chat extends Component {
     store.toggleHideNonHighlighted(removeHashtag(channel))
   }
 
+  handleToggleEmoteMenu() {
+    store.emoteMenuOpen = !store.emoteMenuOpen
+  }
+
   scrollToBottom() {
     const chat = document.getElementById('chat');
     store.scrollToEnd = true
@@ -505,10 +509,32 @@ class Chat extends Component {
     const drawerIcon = store.drawerOpen ? <LeftArrow /> : <RightArrow />
     const drawerControl = <IconButton onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
 
+    const emoteMenu = store.emoteMenuOpen ? 
+      <div style={{ position: 'relative'}}>
+        <div style={{ position: 'absolute', width: w, height: '200px', top: store.height/3, zIndex: 9999, backgroundColor: 'black', opacity: 0.90 }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignSelf: 'auto',
+            alignContent: 'center',
+            justifyContent: 'center',
+          }}>
+            <img style={{height: 32}} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
+            <img style={{height: 32}} src={twitch_emotes_map.get('LUL')} alt='LUL' />
+            <img style={{height: 32}} src={twitch_emotes_map.get('PogChamp')} alt='PogChamp' />
+            <img style={{height: 32}} src={twitch_emotes_map.get('VoHiYo')} alt='VoHiYo' />
+            <img style={{height: 32}}src={twitch_emotes_map.get('KonCha')} alt='KonCha' />
+            
+          </div>
+        </div>
+      </div> :
+      null
+
     return (
-
+      
       <div style={{ height: store.height }}>
-
+        
+        {emoteMenu}
         {chatArea}
         <div style={{
           width: w, height: 60, minHeight: 60, maxHeight: 60,
@@ -524,7 +550,7 @@ class Chat extends Component {
           <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
           <div style={{ position: 'relative', }}>
             <div style={{ position: 'absolute', right: 5, }}>
-              {/* <IconButton onClick={() => console.log('test')}><Face /></IconButton> */}
+              <IconButton onClick={() => this.handleToggleEmoteMenu()}><Face /></IconButton>
             </div>
           </div>
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>

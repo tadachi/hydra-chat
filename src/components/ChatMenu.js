@@ -60,12 +60,14 @@ class ChatMenu extends React.Component {
 
     let channels = []
 
-    for (const [channel, v] of jsonToArray(LOCAL_STORAGE.getItem(CHANNELS))) {
-      v.autoJoin === true && channels.push(
-        <ListItem button key={v.key}>
-          <ListItemText primary={channel} />
-        </ListItem>
-      ) 
+    if (LOCAL_STORAGE.getItem(CHANNELS)) {
+      for (const [channel, v] of jsonToArray(LOCAL_STORAGE.getItem(CHANNELS))) {
+        v.autoJoin === true && channels.push(
+          <ListItem button key={v.key}>
+            <ListItemText primary={channel} />
+          </ListItem>
+        ) 
+      }  
     }
 
     return (
@@ -108,11 +110,11 @@ class ChatMenu extends React.Component {
                   onChange={this.handleTogglehideNonHighlighted}
                 />
               </ListItem>
-              {/* <ListItem key={4}>
+              <ListItem key={4}>
                 <List>
                   {channels}
                 </List>
-              </ListItem> */}
+              </ListItem>
             </List>
           </DialogContent>
           <DialogActions>
