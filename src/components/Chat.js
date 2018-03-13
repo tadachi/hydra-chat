@@ -535,7 +535,17 @@ class Chat extends Component {
 
     const emoteMenu = store.emoteMenuOpen ?
       <div style={{ position: 'relative', }}>
-        <div style={{ position: 'absolute', maxWidth: w, top: store.height / 2, zIndex: 5, backgroundColor: 'black', opacity: 0.90 }}>
+        <div style={{ 
+          position: 'absolute', 
+          maxWidth: w-10, 
+          top: store.height - 60 - 150, 
+          maxHeight: '150px', 
+          zIndex: 5, 
+          backgroundColor: 'black', 
+          opacity: 0.90,
+          overflowY: 'scroll',
+          border: '1px solid #303030',
+          }}>
           <div style={{
             display: 'flex',
             flexDirection: 'row',
