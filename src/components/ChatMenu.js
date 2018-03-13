@@ -7,7 +7,6 @@ import Button from 'material-ui/Button';
 import Dialog, {
   DialogActions,
   DialogContent,
-  DialogTitle,
 } from 'material-ui/Dialog'
 import Settings from 'material-ui-icons/Settings'
 import Delete from 'material-ui-icons/Delete';

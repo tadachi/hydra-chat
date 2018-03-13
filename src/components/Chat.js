@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 // import '../Chat.css'
 import moment from 'moment'
 import axios from 'axios'
-import { toJS } from 'mobx';
+import { toJS, observable } from 'mobx';
 import { observer } from 'mobx-react'
 import store from '../store/store';
 import ReactHtmlParser from 'react-html-parser';
@@ -35,6 +35,7 @@ import { removeHashtag } from '../utility/utility'
 jss.setup(preset())
 
 const styles = {
+  // Emotes
   emote: {
     display: 'inline-block',
     position: 'relative',
@@ -77,6 +78,11 @@ const styles = {
   },
   pastMessages: {
     opacity: 0.75,
+  },
+  // EmoteMenu
+  emoteInput: {
+    height: 32,
+    margin: '5px',
   }
 }
 
@@ -100,10 +106,10 @@ let bttv_user_emotes_map = new Map()
 // FFZ
 let ffz_emotes_map = new Map()
 
-// window.twitch_emotes_map = twitch_emotes_map
-// window.ffz_emotes_map = ffz_emotes_map
-// window.bttv_emotes_map = bttv_emotes_map
-// window.bttv_user_emotes_map = bttv_user_emotes_map
+window.twitch_emotes_map = twitch_emotes_map
+window.ffz_emotes_map = ffz_emotes_map
+window.bttv_emotes_map = bttv_emotes_map
+window.bttv_user_emotes_map = bttv_user_emotes_map
 
 async function getFFZEmotes(name) {
   let config = {
@@ -177,11 +183,12 @@ async function goBTTV(name) {
 
 @observer
 class Chat extends Component {
+  @observable messageInput = ''
+
   constructor(props) {
     super(props)
 
     this.messageCache = []
-    this.regex_channel = /\/\#\S+|\S+\ +/ //['/#Tod', /#Tod    '] OK ['#Tod', '#Tod  '] Not OK.
   }
 
   componentDidMount() {
@@ -377,7 +384,7 @@ class Chat extends Component {
   }
 
   sendMessage(event) {
-    const message = this.messageInput.value
+    const message = this.messageInput
     let channel = store.joinedChannels[store.channelSelectValue].key
 
     if (event.key === 'Enter') {
@@ -394,7 +401,7 @@ class Chat extends Component {
         console.log(err)
       }
 
-      this.messageInput.value = ''
+      this.messageInput = ''
     }
   }
 
@@ -424,6 +431,10 @@ class Chat extends Component {
 
   handleToggleEmoteMenu() {
     store.emoteMenuOpen = !store.emoteMenuOpen
+  }
+
+  handlemessageInputChange(e) {
+    this.messageInput = e.target.value
   }
 
   scrollToBottom() {
@@ -498,10 +509,13 @@ class Chat extends Component {
     const textAreaChat = store.joinedChannels.length > 0 ?
       <TextField
         placeholder=
-        {store.joinedChannels[store.channelSelectValue] !== undefined ? `${store.joinedChannels[store.channelSelectValue].key}` :
+        {store.joinedChannels.length > 0 && store.joinedChannels[store.channelSelectValue] !== undefined ? `${store.joinedChannels[store.channelSelectValue].key}` :
           `Send a Message`
         }
-        inputRef={(el) => { this.messageInput = el }}
+        value={this.messageInput}
+        onChange={ this.handlemessageInputChange.bind(this) } 
+        // inputRef={(el) => { this.messageInput = el }}
+        multiline={true}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
         fullWidth />
       : null
@@ -509,31 +523,47 @@ class Chat extends Component {
     const drawerIcon = store.drawerOpen ? <LeftArrow /> : <RightArrow />
     const drawerControl = <IconButton onClick={() => store.handleDrawerOpen()}>{drawerIcon}</IconButton>
 
-    const emoteMenu = store.emoteMenuOpen ? 
-      <div style={{ position: 'relative'}}>
-        <div style={{ position: 'absolute', width: w, height: '200px', top: store.height/3, zIndex: 9999, backgroundColor: 'black', opacity: 0.90 }}>
+    const ffzEmotes = []
+    if (store.joinedChannels.length > 0 && store.joinedChannels[store.channelSelectValue] !== null) {
+      const channel = store.joinedChannels[store.channelSelectValue] && removeHashtag(toJS(store.joinedChannels[store.channelSelectValue].key))
+      if (ffz_emotes_map.get(channel)) {
+        for (const [k, v] of ffz_emotes_map.get(channel)) {
+          ffzEmotes.push(<img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />)
+        }
+      }
+    }
+
+    const emoteMenu = store.emoteMenuOpen ?
+      <div style={{ position: 'relative', }}>
+        <div style={{ position: 'absolute', maxWidth: w, top: store.height / 3, zIndex: 5, backgroundColor: 'black', opacity: 0.90 }}>
           <div style={{
             display: 'flex',
             flexDirection: 'row',
+            flexWrap: 'wrap',
             alignSelf: 'auto',
             alignContent: 'center',
             justifyContent: 'center',
           }}>
-            <img style={{height: 32}} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
-            <img style={{height: 32}} src={twitch_emotes_map.get('LUL')} alt='LUL' />
-            <img style={{height: 32}} src={twitch_emotes_map.get('PogChamp')} alt='PogChamp' />
-            <img style={{height: 32}} src={twitch_emotes_map.get('VoHiYo')} alt='VoHiYo' />
-            <img style={{height: 32}}src={twitch_emotes_map.get('KonCha')} alt='KonCha' />
-            
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'Kappa '} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'LUL '} src={twitch_emotes_map.get('LUL')} alt='LUL' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'PogChamp '} src={twitch_emotes_map.get('PogChamp')} alt='PogChamp' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'VoHiYo '} src={twitch_emotes_map.get('VoHiYo')} alt='VoHiYo' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'KonCha '} src={twitch_emotes_map.get('KonCha')} alt='KonCha' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'PunOko '} src={twitch_emotes_map.get('PunOko')} alt='PunOko' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'ConcernDoge '} src={bttv_emotes_map.get('ConcernDoge')} alt='ConcernDoge' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'SourPls '} src={bttv_emotes_map.get('SourPls')} alt='SourPls' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'FeelsAmazingMan '} src={bttv_emotes_map.get('FeelsAmazingMan')} alt='FeelsAmazingMan' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'D: '} src={bttv_emotes_map.get('D:')} alt='D:' />
+            {ffzEmotes}
           </div>
         </div>
       </div> :
       null
 
     return (
-      
+
       <div style={{ height: store.height }}>
-        
+
         {emoteMenu}
         {chatArea}
         <div style={{
