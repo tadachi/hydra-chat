@@ -506,7 +506,7 @@ class Chat extends Component {
       <IconButton onClick={this.scrollToBottom.bind(this)}><ArrowDownward /></IconButton> :
       <IconButton disabled onClick={this.scrollToBottom.bind(this)}><ArrowDownward /></IconButton>
 
-    const textAreaChat = store.joinedChannels.length > 0 ?
+    const textAreaChat = store.joinedChannels.length > 0 && store.joinedChannels[store.channelSelectValue] !== null ?
       <TextField
         placeholder=
         {store.joinedChannels.length > 0 && store.joinedChannels[store.channelSelectValue] !== undefined ? `${store.joinedChannels[store.channelSelectValue].key}` :
@@ -535,7 +535,7 @@ class Chat extends Component {
 
     const emoteMenu = store.emoteMenuOpen ?
       <div style={{ position: 'relative', }}>
-        <div style={{ position: 'absolute', maxWidth: w, top: store.height / 3, zIndex: 5, backgroundColor: 'black', opacity: 0.90 }}>
+        <div style={{ position: 'absolute', maxWidth: w, top: store.height / 2, zIndex: 5, backgroundColor: 'black', opacity: 0.90 }}>
           <div style={{
             display: 'flex',
             flexDirection: 'row',
