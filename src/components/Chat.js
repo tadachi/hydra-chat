@@ -514,8 +514,6 @@ class Chat extends Component {
         }
         value={this.messageInput}
         onChange={ this.handlemessageInputChange.bind(this) } 
-        // inputRef={(el) => { this.messageInput = el }}
-        multiline={true}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
         fullWidth />
       : null
@@ -588,11 +586,11 @@ class Chat extends Component {
           <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
           <div style={{}}><ChatMenu /></div>
           <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
-          <div style={{ position: 'relative', }}>
+          {textAreaChat !== null && <div style={{ position: 'relative', }}>
             <div style={{ position: 'absolute', right: 5, }}>
               <IconButton onClick={() => this.handleToggleEmoteMenu()}><Face /></IconButton>
             </div>
-          </div>
+          </div>}
           <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
           <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
         </div>

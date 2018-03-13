@@ -230,6 +230,7 @@ class MainLayout extends Component {
                   <div>widthBreakPoint: {String(store.widthBreakPoint)}</div>
                   <div>highlight: {String(store.highlight)}</div>
                   <div>messagesNoColor: {String(store.messagesNoColor)}</div>
+                  <div>emoteMenuOpen: {String(store.emoteMenuOpen)}</div>
                 </div>
                 : null}
               <ChannelManager />
