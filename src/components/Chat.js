@@ -83,6 +83,7 @@ const styles = {
   emoteInput: {
     height: 32,
     margin: '5px',
+    cursor: 'pointer',
   }
 }
 
@@ -471,6 +472,7 @@ class Chat extends Component {
     let channels = []
     let i = 0
     let w = 500
+    const cw = 115
     store.drawerOpen ? w = store.width - store.drawerWidth - 10 : w = store.width - 10
 
     for (const channel of toJS(store.joinedChannels)) {
@@ -478,7 +480,7 @@ class Chat extends Component {
       i += 1
     }
     const channelSelect = channels.length > 0 ?
-      <Select style={{ maxWidth: 84 }} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={false}>
+      <Select style={{ minWidth: 84, maxWidth: 200 }} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={false}>
         {channels}
       </Select> :
       null
@@ -488,7 +490,7 @@ class Chat extends Component {
       <div style={{
         ...{
           width: '100%',
-          height: store.height - 60,
+          height: store.height - cw,
           overflowY: 'scroll',
           overflowX: 'hidden',
         },
@@ -513,7 +515,11 @@ class Chat extends Component {
           `Send a Message`
         }
         value={this.messageInput}
-        onChange={ this.handlemessageInputChange.bind(this) } 
+        onChange={this.handlemessageInputChange.bind(this)}
+        margin={'dense'}
+        multiline={true}
+        rows={2}
+        rowsMax={3}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
         fullWidth />
       : null
@@ -533,17 +539,17 @@ class Chat extends Component {
 
     const emoteMenu = store.emoteMenuOpen ?
       <div style={{ position: 'relative', }}>
-        <div style={{ 
-          position: 'absolute', 
-          maxWidth: w-10, 
-          top: store.height - 60 - 150, 
-          maxHeight: '150px', 
-          zIndex: 5, 
-          backgroundColor: 'black', 
+        <div style={{
+          position: 'absolute',
+          maxWidth: w,
+          bottom: 0,
+          maxHeight: '150px',
+          zIndex: 5,
+          backgroundColor: 'black',
           opacity: 0.90,
           overflowY: 'scroll',
           border: '1px solid #303030',
-          }}>
+        }}>
           <div style={{
             display: 'flex',
             flexDirection: 'row',
@@ -572,10 +578,10 @@ class Chat extends Component {
 
       <div style={{ height: store.height }}>
 
-        {emoteMenu}
         {chatArea}
+        {emoteMenu}
         <div style={{
-          width: w, height: 60, minHeight: 60, maxHeight: 60,
+          width: w, height: cw, minHeight: cw, maxHeight: cw,
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap',
@@ -583,16 +589,30 @@ class Chat extends Component {
           alignContent: 'center',
           justifyContent: 'center',
         }}>
-          <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
-          <div style={{}}><ChatMenu /></div>
-          <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 900, }}>{textAreaChat}</div>
-          {textAreaChat !== null && <div style={{ position: 'relative', }}>
-            <div style={{ position: 'absolute', right: 5, }}>
+          <div style={{
+            minWidth: 96,
+            maxWidth: 96,
+            maxHeight: 96,
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignSelf: 'auto',
+            alignContent: 'center',
+            justifyContent: 'center',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+          }}>
+            <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
+            {textAreaChat !== null && <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>
               <IconButton onClick={() => this.handleToggleEmoteMenu()}><Face /></IconButton>
-            </div>
-          </div>}
-          <div style={{ margin: 'auto', marginLeft: '4px', }}>{channelSelect}</div>
-          <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
+            </div>}
+            <div style={{ minWidth: 48, maxWidth: 48, }}><ChatMenu /></div>
+            <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
+          </div>
+
+          <div style={{ margin: 'auto', flexGrow: 2, minWidth: 150, maxWidth: 1350, }}>{textAreaChat}</div>
+          <div style={{ margin: 'auto', maxWidth: 200, marginLeft: '4px', }}>{channelSelect}</div>
+
         </div>
       </div>
     )
