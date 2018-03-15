@@ -210,7 +210,7 @@ class MainLayout extends Component {
                 </div> : null}
 
               {store.developmentMode ?
-                <div style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
+                <div style={{ position: 'sticky', top: 0, }}>
                   <div><Button onClick={() => store.updateStreamers()}>Update Streamers</Button></div>
                   <div><Button onClick={() => store.handleDrawerOpen()}>Close ChannelManager</Button></div>
                   <div><WindowDimensions /></div>
@@ -231,6 +231,7 @@ class MainLayout extends Component {
                   <div>highlight: {String(store.highlight)}</div>
                   <div>messagesNoColor: {String(store.messagesNoColor)}</div>
                   <div>emoteMenuOpen: {String(store.emoteMenuOpen)}</div>
+                  <div>hideNonHighlighted: {String(store.hideNonHighlighted)}</div>
                 </div>
                 : null}
               <ChannelManager />

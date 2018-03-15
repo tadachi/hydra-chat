@@ -479,8 +479,10 @@ class Chat extends Component {
       channels.push(<MenuItem style={{ backgroundColor: this.props.theme.palette.background.default }} key={channel.key} value={i}>{channel.key}</MenuItem>)
       i += 1
     }
+
+    const selectStyle = store.mobileScreenSize ? { width: 64 } : { minWidth: 84 }
     const channelSelect = channels.length > 0 ?
-      <Select style={{ minWidth: 84, maxWidth: 200 }} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={false}>
+      <Select style={selectStyle} onChange={this.handleChange.bind(this)} value={parseInt(store.channelSelectValue, 10)} autoWidth={false}>
         {channels}
       </Select> :
       null
@@ -517,7 +519,7 @@ class Chat extends Component {
         value={this.messageInput}
         onChange={this.handlemessageInputChange.bind(this)}
         margin={'dense'}
-        multiline={true}
+        multiline={false}
         rows={2}
         rowsMax={3}
         onKeyPress={this.sendMessage.bind(this)} onKeyDown={this.switchChannel.bind(this)}
@@ -533,6 +535,16 @@ class Chat extends Component {
       if (ffz_emotes_map.get(channel)) {
         for (const [k, v] of ffz_emotes_map.get(channel)) {
           ffzEmotes.push(<img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />)
+        }
+      }
+    }
+
+    const bttvEmotes = []
+    if (store.joinedChannels.length > 0 && store.joinedChannels[store.channelSelectValue] !== null) {
+      const channel = store.joinedChannels[store.channelSelectValue] && removeHashtag(toJS(store.joinedChannels[store.channelSelectValue].key))
+      if (bttv_user_emotes_map.get(channel)) {
+        for (const [k, v] of bttv_user_emotes_map.get(channel)) {
+          bttvEmotes.push(<img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />)
         }
       }
     }
@@ -561,14 +573,18 @@ class Chat extends Component {
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'Kappa '} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'LUL '} src={twitch_emotes_map.get('LUL')} alt='LUL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'PogChamp '} src={twitch_emotes_map.get('PogChamp')} alt='PogChamp' />
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'PunOko '} src={twitch_emotes_map.get('LUL')} alt='LUL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'VoHiYo '} src={twitch_emotes_map.get('VoHiYo')} alt='VoHiYo' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'KonCha '} src={twitch_emotes_map.get('KonCha')} alt='KonCha' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'PunOko '} src={twitch_emotes_map.get('PunOko')} alt='PunOko' />
+            
+            <img className={classes.emoteInput} onClick={() => this.messageInput += 'LuL '} src={bttv_emotes_map.get('LuL')} alt='LuL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'ConcernDoge '} src={bttv_emotes_map.get('ConcernDoge')} alt='ConcernDoge' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'SourPls '} src={bttv_emotes_map.get('SourPls')} alt='SourPls' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'FeelsAmazingMan '} src={bttv_emotes_map.get('FeelsAmazingMan')} alt='FeelsAmazingMan' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'D: '} src={bttv_emotes_map.get('D:')} alt='D:' />
             {ffzEmotes}
+            {bttvEmotes}
           </div>
         </div>
       </div> :
@@ -603,9 +619,9 @@ class Chat extends Component {
             marginRight: 'auto',
           }}>
             <div style={{ minWidth: 48, maxWidth: 48, }}>{drawerControl}</div>
-            {textAreaChat !== null && <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>
+            <div style={{ margin: 'auto', minWidth: 48, maxWidth: 48, }}>
               <IconButton onClick={() => this.handleToggleEmoteMenu()}><Face /></IconButton>
-            </div>}
+            </div>
             <div style={{ minWidth: 48, maxWidth: 48, }}><ChatMenu /></div>
             <div style={{ minWidth: 48, maxWidth: 48, }}>{scrollBottomButton}</div>
           </div>
