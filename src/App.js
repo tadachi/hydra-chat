@@ -71,7 +71,9 @@ class App extends Component {
 
             try {
               if (LOCAL_STORAGE.getItem(CHANNELS)) {
+
                 const channels = jsonToMap(LOCAL_STORAGE.getItem(CHANNELS))
+                store.channels = channels
                 for (const [k, v] of channels.entries()) {
                   if (v.autoJoin === true) {
                     channelsToJoin.push(k)

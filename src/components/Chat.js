@@ -19,6 +19,7 @@ import RightArrow from 'material-ui-icons/KeyboardArrowRight'
 import LeftArrow from 'material-ui-icons/KeyboardArrowLeft'
 import ArrowDownward from 'material-ui-icons/ArrowDownward'
 import Face from 'material-ui-icons/Face'
+import Tooltip from 'material-ui/Tooltip';
 
 // Components
 import ChatMenu from './ChatMenu'
@@ -534,7 +535,9 @@ class Chat extends Component {
       const channel = store.joinedChannels[store.channelSelectValue] && removeHashtag(toJS(store.joinedChannels[store.channelSelectValue].key))
       if (ffz_emotes_map.get(channel)) {
         for (const [k, v] of ffz_emotes_map.get(channel)) {
-          ffzEmotes.push(<img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />)
+          ffzEmotes.push(
+            <img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />
+          )
         }
       }
     }
@@ -544,9 +547,17 @@ class Chat extends Component {
       const channel = store.joinedChannels[store.channelSelectValue] && removeHashtag(toJS(store.joinedChannels[store.channelSelectValue].key))
       if (bttv_user_emotes_map.get(channel)) {
         for (const [k, v] of bttv_user_emotes_map.get(channel)) {
-          bttvEmotes.push(<img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />)
+          bttvEmotes.push(
+            <img className={classes.emoteInput} onClick={() => this.messageInput += `${k} `} src={v} alt={k} key={k} />
+          )
         }
       }
+    }
+
+    let emote = (code) => {
+      return (
+        <img className={classes.emoteInput} onClick={() => this.messageInput += 'Kappa '} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
+      )
     }
 
     const emoteMenu = store.emoteMenuOpen ?
@@ -570,14 +581,13 @@ class Chat extends Component {
             alignContent: 'center',
             justifyContent: 'center',
           }}>
-            <img className={classes.emoteInput} onClick={() => this.messageInput += 'Kappa '} src={twitch_emotes_map.get('Kappa')} alt='Kappa' />
+            {emote('LUL')}
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'LUL '} src={twitch_emotes_map.get('LUL')} alt='LUL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'PogChamp '} src={twitch_emotes_map.get('PogChamp')} alt='PogChamp' />
-            <img className={classes.emoteInput} onClick={() => this.messageInput += 'PunOko '} src={twitch_emotes_map.get('LUL')} alt='LUL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'VoHiYo '} src={twitch_emotes_map.get('VoHiYo')} alt='VoHiYo' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'KonCha '} src={twitch_emotes_map.get('KonCha')} alt='KonCha' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'PunOko '} src={twitch_emotes_map.get('PunOko')} alt='PunOko' />
-            
+
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'LuL '} src={bttv_emotes_map.get('LuL')} alt='LuL' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'ConcernDoge '} src={bttv_emotes_map.get('ConcernDoge')} alt='ConcernDoge' />
             <img className={classes.emoteInput} onClick={() => this.messageInput += 'SourPls '} src={bttv_emotes_map.get('SourPls')} alt='SourPls' />

@@ -76,7 +76,7 @@ class Store {
   @observable msg_id = 0
   @observable scrollToEnd = true
   @observable chatMenuOpen = false
-  @observable emoteMenuOpen = true
+  @observable emoteMenuOpen = false
   @observable messages = []
   @observable channelsStyles = {}
   @observable channelsSheet = jss.createStyleSheet(this.channelsStyleSheet, { link: true }).attach()
