@@ -92,8 +92,9 @@ class ChannelManager extends Component {
       <div
         id="ChannelManager"
         style={{
-          overflowY: "hidden",
-          overflowX: "hidden"
+          overflowY: "scroll",
+          overflowX: "hidden",
+          ...this.props.style
         }}
       >
         {channels}
@@ -109,6 +110,7 @@ let ChannelManagerCSS = {
     gridTemplateRows: "75% 25%",
     border: `1px solid ${store.theme.palette.text.primary}`,
     marginTop: "3px",
+    marginRight: "2%",
     padding: "2%"
   },
   streamer: {

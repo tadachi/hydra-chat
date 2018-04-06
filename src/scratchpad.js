@@ -271,3 +271,100 @@ let parseForEmotes = (message, channel) => {
   }
   return ReactHtmlParser(split_message.join(' '));
 }
+
+<div style={{ padding: "10px" }}>
+{store.oAuth ? (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "nowrap",
+      justifyContent: "space-between",
+      backgroundColor: store.theme.palette.background.default,
+      zIndex: 9999
+    }}
+  >
+    <div>
+      <UserLogo
+        style={{ height: 50 }}
+        name={store.userName}
+        img={store.userLogo}
+      />
+    </div>
+    <div>
+      <IconButton>
+        <Refresh
+          onClick={() => store.updateStreamers()}
+          style={{ width: "100%" }}
+        />
+      </IconButton>
+    </div>
+    <div>
+      <IconButton>
+        <LeftArrow
+          onClick={() => store.handleDrawerOpen()}
+          style={{ width: "100%" }}
+        />
+      </IconButton>
+    </div>
+  </div>
+) : null}
+
+{store.developmentMode ? (
+  <div style={{ position: "sticky", top: 0 }}>
+    <div>
+      <Button onClick={() => store.updateStreamers()}>
+        Update Streamers
+      </Button>
+    </div>
+    <div>
+      <Button onClick={() => store.handleDrawerOpen()}>
+        Close ChannelManager
+      </Button>
+    </div>
+    <div>
+      <WindowDimensions />
+    </div>
+    <div>{store.userName}</div>
+    <div>System Theme: {store.systemTheme}</div>
+    <div># of Messages: {store.msg_id}</div>
+    <div># of Streams: {store.streams.entries().length}</div>
+    <div># of Channels Joined: {store.joinedChannels.length}</div>
+    {/* <div>Talking in: {store.joinedChannels[store.channelSelectValue] !== undefined ?
+      store.joinedChannels[store.channelSelectValue].key
+      : null}</div> */}
+    <div>colorInt: {store.colorInt}</div>
+    <div>ChatMenuOpen: {String(store.chatMenuOpen)}</div>
+    <div>scrollToEnd: {String(store.scrollToEnd)}</div>
+    <div>channelSelectValue: {store.channelSelectValue}</div>
+    <div>mobileScreenSize: {String(store.mobileScreenSize)}</div>
+    <div>widthBreakPoint: {String(store.widthBreakPoint)}</div>
+    <div>highlight: {String(store.highlight)}</div>
+    <div>messagesNoColor: {String(store.messagesNoColor)}</div>
+    <div>emoteMenuOpen: {String(store.emoteMenuOpen)}</div>
+    <div>
+      hideNonHighlighted: {String(store.hideNonHighlighted)}
+    </div>
+  </div>
+) : null}
+
+          <Grid
+            style={{
+              backgroundColor: store.theme.palette.background.default,
+              color: store.theme.palette.text.primary,
+              overflowY: "hidden",
+              overflowX: "hidden",
+              margin: 0
+            }}
+            item
+            xs
+          >
+            <div
+              style={{
+                display:
+                  store.mobileScreenSize && store.drawerOpen ? "none" : "inline"
+              }}
+            >
+              {this.props.ChatComponent}
+            </div>
+          </Grid>
